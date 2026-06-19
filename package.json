@@ -1,5 +1,31 @@
 {
+  "name": "nexus",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/priyansh00soni/Nexus#readme",
+  "bugs": {
+    "url": "https://github.com/priyansh00soni/Nexus/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/priyansh00soni/Nexus.git"
+  },
+  "license": "ISC",
+  "author": "Priyansh",
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
+    "express": "^5.2.1",
     "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.0.0",
+    "@types/pg": "^8.20.0",
+    "nodemon": "^3.1.14",
+    "typescript": "^6.0.3"
   }
 }
