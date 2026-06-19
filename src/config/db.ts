@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import logger from "../utils/logger.js";
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.DB_HOST,
@@ -13,15 +14,15 @@ const connectDB = async()=>{
     while (true) {
         try {
             await pool.query("SELECT NOW()")
-            console.log("Database connected")
+            logger.info("Database connected")
             break
         } catch (error) {
             if (attempt>=10) {
-                console.error(error)
+                logger.error(error)
                 process.exit(1)
             }
             const delay = Math.min(1000*2**attempt,30000)
-            console.log(`DB connection failed, retrying in ${delay}ms`)
+            logger.info(`DB connection failed, retrying in ${delay}ms`)
             await wait(delay)
             attempt++;
         }
