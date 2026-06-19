@@ -1,5 +1,4 @@
 import { Pool } from "pg";
-
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.DB_HOST,
@@ -8,17 +7,26 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT), 
 });
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const connectDB = async()=>{
-    try {
-
-
-        await setTimeout(()=>{pool.query('SELECT NOW()')},2000)
-
-        console.log("Database connected");
-    } catch (error) {
-        console.error(error)
-        process.exit(1)
+    let attempt =1;
+    while (true) {
+        try {
+            await pool.query("SELECT NOW()")
+            console.log("Database connected")
+            break
+        } catch (error) {
+            if (attempt>=10) {
+                console.error(error)
+                process.exit(1)
+            }
+            const delay = Math.min(1000*2**attempt,30000)
+            console.log(`DB connection failed, retrying in ${delay}ms`)
+            await wait(delay)
+            attempt++;
+        }
     }
 }
 
+export {pool}
 export default connectDB
