@@ -18,11 +18,13 @@ const connectDB = async()=>{
             break
         } catch (error) {
             if (attempt>=10) {
-                logger.error(error)
+                logger.error("Max retries reached",{
+                    error: error instanceof Error ? error.message : String(error)
+                })
                 process.exit(1)
             }
             const delay = Math.min(1000*2**attempt,30000)
-            logger.info(`DB connection failed, retrying in ${delay}ms`)
+            logger.info("DB connection failed",{delay,attempt})
             await wait(delay)
             attempt++;
         }
