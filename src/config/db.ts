@@ -10,7 +10,10 @@ const pool = new Pool({
 
 const connectDB = async()=>{
     try {
-        await pool.query('SELECT NOW()')
+
+
+        await setTimeout(()=>{pool.query('SELECT NOW()')},2000)
+
         console.log("Database connected");
     } catch (error) {
         console.error(error)
