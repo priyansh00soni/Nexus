@@ -16,6 +16,7 @@ const connectRedis =async () =>{
         try {
             const reply =await redis.ping()
             logger.info(reply)
+            break
         } catch (error) {
             if(attempt>=10){
                 logger.error("Max retries reached",{
@@ -23,11 +24,11 @@ const connectRedis =async () =>{
                 })
                 process.exit(1)
             }
+            const delay = Math.min(1000*2**attempt,30000) 
+            logger.info("Redis Connection Failed.", {"delay":delay,"attempt":attempt})
+            await wait(delay)
+            attempt++;
         }
-        const delay = Math.min((1000*2)**attempt,30000) 
-        logger.info("Redis Connection Failed.", {"delay":delay,"attempt":attempt})
-        await wait(delay)
-        attempt++;
     }
 }
 
