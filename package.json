@@ -20,6 +20,8 @@
     "dev": "nodemon --exec ts-node src/server.ts"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "pg": "^8.22.0",
     "winston": "^3.19.0"
