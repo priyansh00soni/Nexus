@@ -5,7 +5,6 @@ const redis = new Redis({
     port: Number(process.env.REDIS_PORT),
     host: process.env.REDIS_HOST,
     password: process.env.REDIS_PASSWORD,
-    db:0,
 })
 
 const wait = (ms:number) => new Promise((resolve)=> setTimeout(resolve,ms))
