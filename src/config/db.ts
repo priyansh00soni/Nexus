@@ -24,7 +24,7 @@ const connectDB = async()=>{
                 process.exit(1)
             }
             const delay = Math.min(1000*2**attempt,30000)
-            logger.info("DB connection failed",{delay,attempt})
+            logger.info("DB connection failed",{"delay":delay,"attempt":attempt})
             await wait(delay)
             attempt++;
         }
