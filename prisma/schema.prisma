@@ -8,3 +8,94 @@ datasource db {
   provider = "postgresql"
 }
 
+model ApiKey{
+  id String @id @default(uuid())
+  key_hash String
+  tenant_id String
+  tenant Tenant @relation(fields: [tenant_id],references: [id])
+  created_at DateTime @default(now())
+}
+
+model Tenant{
+  id String @id @default(uuid())
+  name String
+  created_at DateTime @default(now())
+  api_keys ApiKey[]
+  notifications Notification[]
+  templates Template[]
+  idempotency_records IdempotencyRecord[]
+}
+
+enum Channel{
+  WEBHOOK
+  INAPP
+  EMAIL
+}
+
+model Template{
+  id String @id @default(uuid())
+  tenant_id String
+  tenant Tenant @relation(fields: [tenant_id], references: [id])
+  channel Channel
+  message String
+  created_at DateTime @default(now())
+  notifications Notification[]
+}
+
+enum NotificationStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Notification{
+  id String @id @default(uuid())
+  channel Channel
+  tenant_id String
+  tenant Tenant @relation(fields: [tenant_id], references: [id])
+  status NotificationStatus
+  attempts Int @default(0)
+  message String?
+  template_id String?
+  template Template? @relation(fields: [template_id], references: [id])
+  created_at DateTime @default(now())
+  recipient String
+  delivery_attempts DeliveryAttempt[]
+  @@index([tenant_id])
+  @@index([status])
+  @@index([created_at])
+}
+
+enum IdempotencyStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model IdempotencyRecord{
+  id String @id @default(uuid())
+  idempotency_key String
+  request_hash String
+  response_body Json?
+  status IdempotencyStatus
+  created_at DateTime @default(now())
+  tenant_id String
+  tenant Tenant @relation(fields: [tenant_id],references: [id])
+  @@unique([idempotency_key,tenant_id])
+}
+
+enum DeliveryAttemptStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model DeliveryAttempt{
+  id String @id @default(uuid())
+  notification_id String
+  notification Notification @relation(fields: [notification_id], references: [id])
+  created_at DateTime @default(now())
+  status DeliveryAttemptStatus
+  error_message String?
+  @@index([notification_id])
+}
