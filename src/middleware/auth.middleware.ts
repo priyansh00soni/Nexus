@@ -10,13 +10,14 @@ const authMid = asyncHandler(async(req:Request,next:NextFunction)=>{
 
     const key_hash = hashApiKey(apiKey)
 
-    const tenant = await prisma.apiKey.findUnique({
-        where:{key_hash}
+    const apiKeyRecord = await prisma.apiKey.findUnique({
+        where:{key_hash},
+        include: { tenant: true }
     })
 
-    if(!tenant) throw new ApiError(404,"Client Not Registered. Please Register.")
+    if(!apiKeyRecord) throw new ApiError(404,"Client Not Registered. Please Register.")
 
-    req.tenant =tenant
+    req.tenant= apiKeyRecord.tenant
     next()
 })
 
