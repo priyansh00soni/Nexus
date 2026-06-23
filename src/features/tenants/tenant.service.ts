@@ -1,5 +1,5 @@
+import { prisma } from "../../config/PrismaClient.js";
 import generateApiKey from "../../utils/generateApiKey.js";
-import { prisma } from "../../config/prismaClient.js";
 import hashApiKey from "../../utils/hashApiKey.js";
 
 const createTenant = async(name: string)=>{

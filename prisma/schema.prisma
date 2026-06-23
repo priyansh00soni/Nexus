@@ -10,7 +10,7 @@ datasource db {
 
 model ApiKey{
   id String @id @default(uuid())
-  key_hash String
+  key_hash String @unique
   tenant_id String
   tenant Tenant @relation(fields: [tenant_id],references: [id])
   created_at DateTime @default(now())
