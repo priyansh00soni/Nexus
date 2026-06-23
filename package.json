@@ -28,7 +28,8 @@
     "express": "^5.2.1",
     "ioredis": "^5.11.1",
     "pg": "^8.22.0",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
