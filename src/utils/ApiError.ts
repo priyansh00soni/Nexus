@@ -6,7 +6,7 @@ class ApiError extends Error{
     constructor(
         statusCode : number,
         message = 'Something went Wrong!',
-        errors =[]
+        errors:any =[]
     ){
         super(message)
         this.statusCode = statusCode
