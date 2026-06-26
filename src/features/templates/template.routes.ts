@@ -2,7 +2,7 @@ import { Router } from "express";
 import validate from "../../middleware/validate.middleware.js";
 import authMid from "../../middleware/auth.middleware.js";
 import { createTemplateController, deleteTemplateController, getTemplateController, updateTemplateController } from "./template.controller.js";
-import { createTemplateSchema, updateTemplateSchema } from "./templates.zodSchema.js";
+import { createTemplateSchema, updateTemplateSchema } from "./template.zodSchema.js";
 
 const router = Router()
 
