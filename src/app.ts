@@ -31,12 +31,17 @@ app.use('/api/v1/health',HealthRouter)
 app.use('/api/v1/tenant',TenantRouter)
 
 
+import { Prisma } from "./generated/prisma/client.js";
 
 app.use((err:ApiError | Error,req:Request,res:Response,next:NextFunction)=>{
+
+    if(err instanceof Prisma.PrismaClientKnownRequestError){
+        if(err.code === 'P2002') return res.status(409).json({ success: false, message: "Resource already exists." })
+        if(err.code === 'P2025') return res.status(404).json({ success: false, message: "Resource Not Found." })
+    }
+
     const statusCode = err instanceof ApiError ? err.statusCode : 500
-    return res.status(statusCode || 500).json(
-        new ApiResponse(statusCode || 500,err.message||"Something went wrong")
-    )
+    return res.status(statusCode || 500).json(new ApiResponse(statusCode || 500,err.message||"Something went wrong"))
 })
 
 export default app
