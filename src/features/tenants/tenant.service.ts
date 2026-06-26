@@ -1,4 +1,5 @@
 import { prisma } from "../../config/PrismaClient.js";
+import ApiError from "../../utils/ApiError.js";
 import generateApiKey from "../../utils/generateApiKey.js";
 import hashApiKey from "../../utils/hashApiKey.js";
 
@@ -19,6 +20,7 @@ const createTenant = async(name: string)=>{
         })
         return {tenant, apiKey}
     })
+
 
     return {rawKey, tenant:result.tenant} 
 }

@@ -1,0 +1,25 @@
+import { prisma } from "../../config/PrismaClient.js"
+import ApiError from "../../utils/ApiError.js"
+
+const createTemplate = async(message:string, channel: ("WEBHOOK" | "INAPP" | "EMAIL"), tenant_id:string)=>{
+    const template = await prisma.template.create({
+        data:{
+            message,
+            channel,
+            tenant_id
+        }
+    })
+
+    return template
+}
+
+const getTemplate = async(template_id:string, tenant_id:string) =>{
+    const template = await prisma.template.findFirst({
+            where:{id:template_id, tenant_id}
+    })
+    if(!template) throw new ApiError(404,"No Template Found")
+    return template
+}
+
+
+export {createTemplate, getTemplate}
