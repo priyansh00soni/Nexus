@@ -10,6 +10,8 @@ const createTemplate = async(message:string, channel: ("WEBHOOK" | "INAPP" | "EM
         }
     })
 
+    if(!template) throw new ApiError(500,"Something went wrong while creating tenant")
+
     return template
 }
 

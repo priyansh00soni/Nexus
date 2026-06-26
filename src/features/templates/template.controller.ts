@@ -17,4 +17,5 @@ const getTemplateController = asyncHandler(async(req:Request, res:Response)=>{
     return res.status(200).json(new ApiResponse(200,template,"Template Fetched Successfully."))
 })
 
+
 export {getTemplateController, createTemplateController}
