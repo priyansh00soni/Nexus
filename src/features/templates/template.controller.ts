@@ -30,6 +30,7 @@ const updateTemplateController = asyncHandler(async(req:Request, res:Response)=>
 
 const deleteTemplateController = asyncHandler(async(req:Request, res:Response)=>{ 
     const template_id = req.params.template_id as string
+    if(!template_id) throw new ApiError(400,"Please provide template id.")
     const tenant_id = req.tenant.id
     const template = await deleteTemplate(template_id,tenant_id)
     return res.status(200).json(new ApiResponse(200,template,"Template Deleted Successfully."))
