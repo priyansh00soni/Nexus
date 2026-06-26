@@ -35,4 +35,12 @@ const updateTemplate = async(template_id:string, tenant_id:string, message?:stri
     return template
 }
 
-export {createTemplate, getTemplate, updateTemplate}
+const deleteTemplate = async(template_id:string, tenant_id:string)=>{
+    const template  = await prisma.template.delete({
+        where:{id:template_id,tenant_id}
+    })
+    if(!template) throw new ApiError(500,"Template not found.")
+    return template
+}
+
+export {createTemplate, getTemplate, updateTemplate, deleteTemplate}
