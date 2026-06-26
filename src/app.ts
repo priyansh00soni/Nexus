@@ -41,7 +41,7 @@ app.use((err:ApiError | Error,req:Request,res:Response,next:NextFunction)=>{
     }
 
     const statusCode = err instanceof ApiError ? err.statusCode : 500
-    return res.status(statusCode || 500).json(new ApiResponse(statusCode || 500,err.message||"Something went wrong"))
+    return res.status(statusCode).json({ success: false, message: err.message || "Something went wrong" })
 })
 
 export default app
