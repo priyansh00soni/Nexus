@@ -23,5 +23,16 @@ const getTemplate = async(template_id:string, tenant_id:string) =>{
     return template
 }
 
+const updateTemplate = async(template_id:string, tenant_id:string, message?:string , channel?: ("WEBHOOK" | "INAPP" | "EMAIL"))=>{
+    const template = await prisma.template.update({
+        where:{id:template_id,tenant_id},
+        data:{
+            message? :message,
+            channel? :channel
+        }
+    }) 
 
-export {createTemplate, getTemplate}
+    return template
+}
+
+export {createTemplate, getTemplate, updateTemplate}

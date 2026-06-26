@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import asyncHandler from "../../utils/asyncHandler.js";
-import {createTemplate, getTemplate} from "./template.service.js";
+import {createTemplate, getTemplate, updateTemplate} from "./template.service.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 
 const createTemplateController = asyncHandler(async(req:Request, res:Response)=>{
@@ -17,5 +17,12 @@ const getTemplateController = asyncHandler(async(req:Request, res:Response)=>{
     return res.status(200).json(new ApiResponse(200,template,"Template Fetched Successfully."))
 })
 
+const updateTemplateController = asyncHandler(async(req:Request, res:Response)=>{
+    const template_id = req.params.template_id as string
+    const {message,channel} = req.body
+    const tenant_id = req.tenant.id
+    const template = await updateTemplate(template_id,tenant_id, message, channel)
+    return res.status(200).json(new ApiResponse(200,template,"Template Updated Successfully."))
+})
 
-export {getTemplateController, createTemplateController}
+export {getTemplateController, createTemplateController, updateTemplateController}
