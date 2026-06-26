@@ -27,8 +27,8 @@ const updateTemplate = async(template_id:string, tenant_id:string, message?:stri
     const template = await prisma.template.update({
         where:{id:template_id,tenant_id},
         data:{
-            message? :message,
-            channel? :channel
+           ...(message ? {message} : {}),
+           ...(channel ? {channel} : {})
         }
     }) 
 
