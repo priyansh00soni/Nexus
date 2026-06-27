@@ -15,34 +15,45 @@ const worker = new Worker('email-queue',async job => {
     if(!notification) throw new ApiError(404, "Notification not found")
 
     let messageString 
+    let subjectString
 
     if(notification.template_id){
-      const templateMessage = await prisma.template.findUnique({
+      const template = await prisma.template.findUnique({
         where:{id:notification.template_id},
-        select:{
-          message:true
-        }
       })
 
-      if(!templateMessage) throw new ApiError(404, "Template not found")
+      if(!template) throw new ApiError(404, "Template not found")
 
+      messageString = templateRenderer(template.message,notification.variables as Record<string, unknown>)
 
-      messageString = templateRenderer(templateMessage.message,notification.variables as Record<string, unknown>)
+      subjectString = template.subject
     }
 
-    if(!notification.message) throw new ApiError(404, "Message not found")
+    else{
+      if(!notification.message) throw new ApiError(404, "Message not found")
+      messageString = templateRenderer(notification.message,notification.variables as Record<string, unknown>)
+      subjectString = notification.subject
+    }
 
-    else messageString = templateRenderer(notification.message,notification.variables as Record<string, unknown>)
+    if(!subjectString) throw new ApiError(400,"Subject not provided")
 
     //Send Mail via Resend
 
+    const tenant = await prisma.tenant.findFirst({
+      where:{id:notification.tenant_id},
+    })
+
+    if(!tenant?.from_email) throw new ApiError(400,"Client email not provided.")
+
     const resend = new Resend(process.env.RESEND_API_KEY);
-    resend.emails.send({
-      from: 'onboarding@resend.dev',
+
+    const mail = await resend.emails.send({
+      from: tenant.from_email,
       to: notification.recipient,
-      subject: 'Hello World',
+      subject: subjectString,
       html: messageString
-  });
+    });
+
 
   },{ connection: bullmqConnection },
 );
