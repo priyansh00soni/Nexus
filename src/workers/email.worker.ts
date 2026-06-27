@@ -36,6 +36,7 @@ const worker = new Worker('email-queue',async job => {
     }
 
     if(!subjectString) throw new ApiError(400,"Subject not provided")
+    if(!messageString) throw new ApiError(400, "Message could not be resolved")
 
     //Send Mail via Resend
 
@@ -44,24 +45,42 @@ const worker = new Worker('email-queue',async job => {
     })
 
     if(!tenant?.from_email) throw new ApiError(400,"Client email not provided.")
+    
 
     const resend = new Resend(process.env.RESEND_API_KEY);
-
-    const mail = await resend.emails.send({
+    await resend.emails.send({
       from: tenant.from_email,
       to: notification.recipient,
       subject: subjectString,
       html: messageString
     });
 
+    //DB updates
+
+    await prisma.deliveryAttempt.create({
+      data:{
+        notification_id:job?.data.notification_id,
+        status:"COMPLETED",
+      }
+    })
+
+    await prisma.notification.update({
+      where:{id: job?.data.notification_id},
+      data:{
+        status:"COMPLETED",
+        attempts:{increment:1}
+      }
+    })
+
 
   },{ connection: bullmqConnection },
 );
 
-worker.on('completed', job => {
-  logger.info(`${job.id} has completed!`);
-});
+  worker.on('completed',async job => {
+    logger.info(`${job.id} has completed!`);
 
-worker.on('failed', (job, err) => {
-  logger.info(`${job?.id} has failed with ${err.message}`);
-});
+  });
+
+  worker.on('failed',async (job, err) => {
+    logger.info(`${job?.id} has failed with ${err.message}`);
+  });
