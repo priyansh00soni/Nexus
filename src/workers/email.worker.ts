@@ -2,7 +2,6 @@ import { Worker } from 'bullmq';
 import { bullmqConnection } from '../config/bullmq.config.js';
 import logger from '../utils/logger.js';
 import { prisma } from '../config/PrismaClient.js';
-import { templateRenderer } from '../utils/templateRenderer.js';
 import ApiError from '../utils/ApiError.js';
 import { Resend } from 'resend';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
