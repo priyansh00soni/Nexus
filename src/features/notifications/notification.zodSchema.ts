@@ -5,13 +5,15 @@ const rawSchema = z.object({
     message: z.string(),
     channel: z.enum([Channel.EMAIL, Channel.INAPP, Channel.WEBHOOK]),
     recipient:z.string(),
-    variables: z.record(z.string(), z.unknown()).optional()
+    variables: z.record(z.string(), z.unknown()).optional(),
+    subject:z.string()
 })
 
 const templateSchema = z.object({
     recipient:z.string(),
     template_id: z.string(),
-    variables: z.record(z.string(), z.unknown()).optional()
+    variables: z.record(z.string(), z.unknown()).optional(),
+    subject:z.string()
 })
 
 export const createNotificationSchema = z.union([rawSchema,templateSchema]).refine(

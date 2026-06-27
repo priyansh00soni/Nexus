@@ -19,6 +19,7 @@ model ApiKey{
 model Tenant{
   id String @id @default(uuid())
   name String
+  from_email String
   created_at DateTime @default(now())
   api_keys ApiKey[]
   notifications Notification[]
@@ -38,6 +39,7 @@ model Template{
   tenant Tenant @relation(fields: [tenant_id], references: [id])
   channel Channel
   message String
+  subject String?
   created_at DateTime @default(now())
   notifications Notification[]
 }
@@ -55,6 +57,7 @@ model Notification{
   tenant Tenant @relation(fields: [tenant_id], references: [id])
   status NotificationStatus
   attempts Int @default(0)
+  subject String?
   message String?
   variables Json?
   template_id String?

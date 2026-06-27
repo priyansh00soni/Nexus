@@ -4,6 +4,7 @@ import logger from '../utils/logger.js';
 import { prisma } from '../config/PrismaClient.js';
 import { templateRenderer } from '../utils/templateRenderer.js';
 import ApiError from '../utils/ApiError.js';
+import { Resend } from 'resend';
 
 const worker = new Worker('email-queue',async job => {
 
@@ -32,6 +33,16 @@ const worker = new Worker('email-queue',async job => {
     if(!notification.message) throw new ApiError(404, "Message not found")
 
     else messageString = templateRenderer(notification.message,notification.variables as Record<string, unknown>)
+
+    //Send Mail via Resend
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: notification.recipient,
+      subject: 'Hello World',
+      html: messageString
+  });
 
   },{ connection: bullmqConnection },
 );
