@@ -4,12 +4,14 @@ import { Channel } from '../../generated/prisma/enums.js'
 const rawSchema = z.object({
     message: z.string(),
     channel: z.enum([Channel.EMAIL, Channel.INAPP, Channel.WEBHOOK]),
-    recipient:z.string()
+    recipient:z.string(),
+    variables: z.record(z.string(), z.unknown()).optional()
 })
 
 const templateSchema = z.object({
     recipient:z.string(),
-    template_id: z.string()
+    template_id: z.string(),
+    variables: z.record(z.string(), z.unknown()).optional()
 })
 
 export const createNotificationSchema = z.union([rawSchema,templateSchema]).refine(

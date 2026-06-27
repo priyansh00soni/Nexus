@@ -56,6 +56,7 @@ model Notification{
   status NotificationStatus
   attempts Int @default(0)
   message String?
+  variables Json?
   template_id String?
   template Template? @relation(fields: [template_id], references: [id])
   created_at DateTime @default(now())

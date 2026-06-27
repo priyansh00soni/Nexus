@@ -1,19 +1,19 @@
 import { Worker } from 'bullmq';
 import { bullmqConnection } from '../config/bullmq.config.js';
+import logger from '../utils/logger.js';
+
 const worker = new Worker(
   'email-queue',
   async job => {
-    // Will print { foo: 'bar'} for the first job
-    // and { qux: 'baz' } for the second.
-    console.log(job.data);
+    logger.info(job)
   },
   { connection: bullmqConnection },
 );
 
 worker.on('completed', job => {
-  console.log(`${job.id} has completed!`);
+  logger.info(`${job.id} has completed!`);
 });
 
 worker.on('failed', (job, err) => {
-  console.log(`${job?.id} has failed with ${err.message}`);
+  logger.info(`${job?.id} has failed with ${err.message}`);
 });
