@@ -1,2 +1,3 @@
 import { Queue } from 'bullmq';
-export const inappQueue = new Queue('inapp-queue',)
+import { bullmqConnection } from '../config/bullmq.config.js';
+export const inappQueue = new Queue('inapp-queue',{connection:bullmqConnection})

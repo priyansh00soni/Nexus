@@ -1,2 +1,3 @@
 import { Queue } from 'bullmq';
-export const webhookQueue = new Queue('webhook-queue',)
+import { bullmqConnection } from '../config/bullmq.config.js';
+export const webhookQueue = new Queue('webhook-queue',{connection:bullmqConnection})
