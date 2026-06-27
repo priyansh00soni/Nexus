@@ -40,6 +40,8 @@ services:
     depends_on:
       - postgres
       - redis
+    deploy:
+      replicas: 3
     
 volumes:
   postgres_data:
