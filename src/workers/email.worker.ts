@@ -5,38 +5,13 @@ import { prisma } from '../config/PrismaClient.js';
 import { templateRenderer } from '../utils/templateRenderer.js';
 import ApiError from '../utils/ApiError.js';
 import { Resend } from 'resend';
+import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
 
 const worker = new Worker('email-queue',async job => {
 
-    const notification = await prisma.notification.findUnique({
-      where:{id:job.data.notification_id}
-    })
-
-    if(!notification) throw new ApiError(404, "Notification not found")
-
-    let messageString 
-    let subjectString
-
-    if(notification.template_id){
-      const template = await prisma.template.findUnique({
-        where:{id:notification.template_id},
-      })
-
-      if(!template) throw new ApiError(404, "Template not found")
-
-      messageString = templateRenderer(template.message,notification.variables as Record<string, unknown>)
-
-      subjectString = template.subject
-    }
-
-    else{
-      if(!notification.message) throw new ApiError(404, "Message not found")
-      messageString = templateRenderer(notification.message,notification.variables as Record<string, unknown>)
-      subjectString = notification.subject
-    }
+    const {subjectString, messageString, notification} =await resolveNotificationMessage(job.data.notification_id)
 
     if(!subjectString) throw new ApiError(400,"Subject not provided")
-    if(!messageString) throw new ApiError(400, "Message could not be resolved")
 
     //Send Mail via Resend
 
@@ -49,7 +24,7 @@ const worker = new Worker('email-queue',async job => {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
-      from: tenant.from_email,
+      from: "onboarding@resend.dev",
       to: notification.recipient,
       subject: subjectString,
       html: messageString
