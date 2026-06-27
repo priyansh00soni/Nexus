@@ -9,7 +9,6 @@ import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.
 const worker = new Worker('email-queue',async job => {
 
     const {subjectString, messageString, notification} =await resolveNotificationMessage(job.data.notification_id)
-
     if(!subjectString) throw new ApiError(400,"Subject not provided")
 
     //Send Mail via Resend
@@ -19,9 +18,9 @@ const worker = new Worker('email-queue',async job => {
     })
 
     if(!tenant?.from_email) throw new ApiError(400,"Client email not provided.")
-    
 
     const resend = new Resend(process.env.RESEND_API_KEY);
+    
     await resend.emails.send({
       from: "onboarding@resend.dev",
       to: notification.recipient,
@@ -48,8 +47,6 @@ const worker = new Worker('email-queue',async job => {
       })
     ])
     
-
-
   },{ connection: bullmqConnection },
 );
 
