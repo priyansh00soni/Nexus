@@ -20,12 +20,22 @@ services:
       - redis_data:/data
     restart: always
 
-  app:
+  api:
     build: .
     env_file:
       - .env
     ports:
       - "8000:8000"
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: .
+    command: node dist/worker.js
+    env_file:
+      - .env
     restart: always
     depends_on:
       - postgres
