@@ -56,21 +56,24 @@ const worker = new Worker('email-queue',async job => {
     });
 
     //DB updates
+    
+    await prisma.$transaction([
+        prisma.deliveryAttempt.create({
+            data:{
+              notification_id:job?.data.notification_id,
+              status:"COMPLETED",
+            }
+        }),
 
-    await prisma.deliveryAttempt.create({
-      data:{
-        notification_id:job?.data.notification_id,
-        status:"COMPLETED",
-      }
-    })
-
-    await prisma.notification.update({
-      where:{id: job?.data.notification_id},
-      data:{
-        status:"COMPLETED",
-        attempts:{increment:1}
-      }
-    })
+      prisma.notification.update({
+          where:{id: job?.data.notification_id},
+          data:{
+            status:"COMPLETED",
+            attempts:{increment:1}
+          }
+      })
+    ])
+    
 
 
   },{ connection: bullmqConnection },
