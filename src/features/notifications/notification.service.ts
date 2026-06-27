@@ -10,7 +10,7 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
             recipient,
             channel,
             ...(message ? {message} : {}),
-            ...(variables ? {variables} : {}),
+            ...(variables ? {variables: variables as any} : {}),
             ...(template_id ? {template_id} : {}),
             status:"PROCESSING",
             attempts:0,
