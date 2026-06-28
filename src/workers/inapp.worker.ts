@@ -6,7 +6,7 @@ import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.
 
 const worker = new Worker('inapp-queue',async job => {
 
-    await resolveNotificationMessage(job.data.notification_id)
+    const {subjectString, messageString, notification}=await resolveNotificationMessage(job.data.notification_id)
 
     //Inapp notification - The notification is already in the DB from when it was created. The worker just marks it as delivered. When the user opens the app, they call GET /notifications/inapp and your API returns all their notifications from DB.
 
@@ -21,37 +21,33 @@ const worker = new Worker('inapp-queue',async job => {
                 status:"COMPLETED",
               }
           }),
-  
         prisma.notification.update({
             where:{id: job?.data.notification_id},
             data:{
               status:"COMPLETED",
-              attempts:{increment:1}
+              attempts:{increment:1},
+              message:messageString,
+              subject:subjectString
             }
         })
       ])
     } catch (error) {
-      
-    }
-    
-  },{ connection: bullmqConnection },
-);
-
-  worker.on('completed',async job => { //fires after the processor function finishes without throwing.
-    try {
-      await prisma.notification.update({
-        where:{id: job?.data.notification_id},
-          data:{
-            status:"COMPLETED"
-          }
-      })
-      logger.info(`${job.id} for inapp has completed!`);
-    } catch (error) {
-        logger.error("DB update Failed in inApp job.",{
+      logger.error("DB update Failed in email job.",{
             error: error instanceof Error ? error.message : String(error)
         })
     }
+    
+  },{ connection: bullmqConnection,
+      settings: {
+            backoffStrategy: (attemptsMade) => {
+                return Math.min(1000 * 2 ** attemptsMade, 30000)
+        }
+      } 
+    }
+);
 
+  worker.on('completed',async job => { //fires after the processor function finishes without throwing.
+    logger.info(`${job.id} for inapp has completed!`);
   });
 
   worker.on('failed',async (job, error) => { //fires after a job fails AND has exhausted all retries.

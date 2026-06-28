@@ -51,7 +51,13 @@ const worker = new Worker('webhook-queue',async job => {
       })
     ])
     
-  },{ connection: bullmqConnection },
+  },{ connection: bullmqConnection,
+      settings: {
+            backoffStrategy: (attemptsMade) => {
+                return Math.min(1000 * 2 ** attemptsMade, 30000)
+        }
+      } 
+    }
 );
 
   worker.on('completed',async job => {
