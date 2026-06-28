@@ -24,7 +24,12 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
         WEBHOOK: webhookQueue
     }
 
-    await queueMap[channel].add(`send-${channel.toLowerCase()}`, { notification_id: notification.id })
+    await queueMap[channel].add(`send-${channel.toLowerCase()}`, { notification_id: notification.id },{
+    attempts: 3,
+    backoff: {
+        type: 'custom',
+    }
+})
 
     return notification
 }

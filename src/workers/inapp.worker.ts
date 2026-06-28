@@ -13,31 +13,60 @@ const worker = new Worker('inapp-queue',async job => {
     
     //DB updates
     
-    await prisma.$transaction([
-        prisma.deliveryAttempt.create({
+    try {
+      await prisma.$transaction([
+          prisma.deliveryAttempt.create({
+              data:{
+                notification_id:job?.data.notification_id,
+                status:"COMPLETED",
+              }
+          }),
+  
+        prisma.notification.update({
+            where:{id: job?.data.notification_id},
             data:{
-              notification_id:job?.data.notification_id,
               status:"COMPLETED",
+              attempts:{increment:1}
             }
-        }),
-
-      prisma.notification.update({
-          where:{id: job?.data.notification_id},
-          data:{
-            status:"COMPLETED",
-            attempts:{increment:1}
-          }
-      })
-    ])
+        })
+      ])
+    } catch (error) {
+      
+    }
     
   },{ connection: bullmqConnection },
 );
 
-  worker.on('completed',async job => {
-    logger.info(`${job.id} has completed!`);
+  worker.on('completed',async job => { //fires after the processor function finishes without throwing.
+    try {
+      await prisma.notification.update({
+        where:{id: job?.data.notification_id},
+          data:{
+            status:"COMPLETED"
+          }
+      })
+      logger.info(`${job.id} for inapp has completed!`);
+    } catch (error) {
+        logger.error("DB update Failed in inApp job.",{
+            error: error instanceof Error ? error.message : String(error)
+        })
+    }
 
   });
 
-  worker.on('failed',async (job, err) => {
-    logger.info(`${job?.id} has failed with ${err.message}`);
+  worker.on('failed',async (job, error) => { //fires after a job fails AND has exhausted all retries.
+    try {
+      await prisma.notification.update({
+        where:{id: job?.data.notification_id},
+          data:{
+            status:"FAILED",
+            error_message: error instanceof Error ? error.message : String(error)
+          }
+      })
+      logger.info(`${job?.id} has failed with ${error.message}`);
+    } catch (error) {
+        logger.error("DB update Failed in inApp job.",{
+            error: error instanceof Error ? error.message : String(error)
+        })
+    }
   });
