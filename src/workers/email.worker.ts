@@ -18,7 +18,7 @@ const worker = new Worker('email-queue',async job => {
           where:{id:notification.tenant_id},
         })
     
-        if(!tenant?.from_email) throw new ApiError(400,"Client email not provided.")
+        if(!tenant?.from_email) throw new Error("Client email not provided.")
     
         const resend = new Resend(process.env.RESEND_API_KEY);
         
