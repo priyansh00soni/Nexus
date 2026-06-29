@@ -5,7 +5,7 @@ import ApiError from "../utils/ApiError.js";
 
 const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)=>{
     
-    //works for per tenant
+    //works for per tenant, uses sorted set. - sliding window rate limiting.
     const key = `rateLimit:${req.tenant.id}`
     const now =Date.now()
     const windowStart = now - 60000
