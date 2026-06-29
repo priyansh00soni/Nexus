@@ -29,6 +29,8 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
 
     if(idempotencyRecord){
         if(incomingReqHash!==idempotencyRecord.request_hash) throw new ApiError(409,"Please use different idempotency key.")
+
+        if(idempotencyRecord.status=="PROCESSING") return res.status(409).json(new ApiResponse(409,"Request is already being processed"))
         
         if(idempotencyRecord.response_body) return res.status(200).json(new ApiResponse(201,idempotencyRecord.response_body,"Notification created Successfully."))
     }
