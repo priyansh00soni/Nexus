@@ -61,6 +61,7 @@ model Notification{
   subject String?
   message String?
   variables Json?
+  scheduledFor String?
   template_id String?
   template Template? @relation(fields: [template_id], references: [id])
   created_at DateTime @default(now())

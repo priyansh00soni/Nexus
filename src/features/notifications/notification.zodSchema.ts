@@ -7,6 +7,7 @@ const rawSchema = z.object({
     recipient:z.string(),
     variables: z.record(z.string(), z.unknown()).optional(),
     subject:z.string().optional()
+    scheduledFor:z.coerce.date().optional()
 })
 
 const templateSchema = z.object({

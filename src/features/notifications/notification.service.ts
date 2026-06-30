@@ -1,3 +1,4 @@
+import { delay } from "bullmq"
 import { prisma } from "../../config/PrismaClient.js"
 import { emailQueue } from "../../queues/email.queue.js"
 import { inappQueue } from "../../queues/inapp.queue.js"
@@ -24,7 +25,7 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
         WEBHOOK: webhookQueue
     }
 
-    await queueMap[channel].add(`send-${channel.toLowerCase()}`, { notification_id: notification.id },{
+    await queueMap[channel].add(`send-${channel.toLowerCase()}` , { notification_id: notification.id },{
     attempts: 3,
     backoff: {
         type: 'custom',
