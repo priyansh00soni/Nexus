@@ -48,6 +48,7 @@ enum NotificationStatus {
   PROCESSING
   COMPLETED
   FAILED
+  SCHEDULED
 }
 
 model Notification{
