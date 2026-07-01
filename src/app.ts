@@ -23,13 +23,13 @@ app.use(cookieParser())
 
 //Routes
 
-import HealthRouter from './monitoring/monitoring.routes.js'
+import MonitoringRouter from './monitoring/monitoring.routes.js'
 import TenantRouter from './features/tenants/tenant.routes.js'
 import TemplateRouter from './features/templates/template.routes.js'
 import NotificationRouter from './features/notifications/notification.routes.js'
 
 
-app.use('/api/v1/health',HealthRouter)
+app.use('/api/v1/monitoring',MonitoringRouter)
 app.use('/api/v1/tenant',TenantRouter)
 app.use('/api/v1/template',TemplateRouter)
 app.use('/api/v1/notification',NotificationRouter)
