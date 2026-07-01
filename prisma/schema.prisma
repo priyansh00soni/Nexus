@@ -13,14 +13,14 @@ model ApiKey{
   key_hash String @unique
   tenant_id String
   tenant Tenant @relation(fields: [tenant_id],references: [id])
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz
 }
 
 model Tenant{
   id String @id @default(uuid())
   name String
   from_email String
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz
   api_keys ApiKey[]
   notifications Notification[]
   templates Template[]
@@ -40,7 +40,7 @@ model Template{
   channel Channel
   message String
   subject String?
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz
   notifications Notification[]
 }
 
@@ -64,7 +64,7 @@ model Notification{
   scheduledFor DateTime? @db.Timestamptz
   template_id String?
   template Template? @relation(fields: [template_id], references: [id])
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz
   recipient String
   delivery_attempts DeliveryAttempt[]
   @@index([tenant_id])
@@ -84,7 +84,7 @@ model IdempotencyRecord{
   request_hash String
   response_body Json?
   status IdempotencyStatus
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz
   tenant_id String
   tenant Tenant @relation(fields: [tenant_id],references: [id])
   @@unique([idempotency_key,tenant_id])
@@ -100,7 +100,7 @@ model DeliveryAttempt{
   id String @id @default(uuid())
   notification_id String
   notification Notification @relation(fields: [notification_id], references: [id])
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz
   status DeliveryAttemptStatus
   error_message String?
   @@index([notification_id])
