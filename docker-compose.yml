@@ -21,7 +21,8 @@ services:
     restart: always
 
   api:
-    build: .
+    build: . 
+    # build an image using the Dockerfile in the current directory 
     env_file:
       - .env
     ports:
