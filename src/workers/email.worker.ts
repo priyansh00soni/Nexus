@@ -5,10 +5,11 @@ import { prisma } from '../config/PrismaClient.js';
 import ApiError from '../utils/ApiError.js';
 import { Resend } from 'resend';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
-import { failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
+import { duration, failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
 
 const worker = new Worker('email-queue',async job => {
 
+      const end = duration.startTimer({channel:'EMAIL'})
     
       const {subjectString, messageString, notification} =await resolveNotificationMessage(job.data.notification_id)
       if(!subjectString) throw new ApiError(400,"Subject not provided")
@@ -57,6 +58,7 @@ const worker = new Worker('email-queue',async job => {
           throw error
       }
 
+
     //DB updates
     
     try {
@@ -71,6 +73,8 @@ const worker = new Worker('email-queue',async job => {
             error: error instanceof Error ? error.message : String(error)
         })
     }
+
+    end()
      
     //backoff settings
 

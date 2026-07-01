@@ -3,9 +3,11 @@ import { bullmqConnection } from '../config/bullmq.config.js';
 import logger from '../utils/logger.js';
 import { prisma } from '../config/PrismaClient.js';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
-import { successfulRequestsCounter } from '../monitoring/metrics.js';
+import { duration, successfulRequestsCounter } from '../monitoring/metrics.js';
 
 const worker = new Worker('inapp-queue',async job => {
+
+    const end = duration.startTimer({channel:'EMAIL'})
 
     const {subjectString, messageString, notification}=await resolveNotificationMessage(job.data.notification_id)
 
@@ -37,6 +39,8 @@ const worker = new Worker('inapp-queue',async job => {
             error: error instanceof Error ? error.message : String(error)
         })
     }
+
+    end()
     
   },{ connection: bullmqConnection,
       settings: {
