@@ -1,10 +1,10 @@
-import { delay } from "bullmq"
 import { prisma } from "../../config/PrismaClient.js"
 import { emailQueue } from "../../queues/email.queue.js"
 import { inappQueue } from "../../queues/inapp.queue.js"
 import { webhookQueue } from "../../queues/webhook.queue.js"
 
-const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:String)=>{
+const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:Date)=>{
+
 
     const notification = await prisma.notification.create({
         data:{
@@ -15,10 +15,13 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
             ...(subject  ? {subject } : {}),
             ...(variables ? {variables: variables as any} : {}),
             ...(template_id ? {template_id} : {}),
-            status:"PROCESSING",
+            ...(scheduledFor ? {scheduledFor} : {}),
+            status: scheduledFor? "SCHEDULED" : "PROCESSING",
             attempts:0,
         }
     })
+
+    const delay = scheduledFor ? Math.max(0, scheduledFor.getTime() - Date.now()) : 0
 
     const queueMap = {
         EMAIL: emailQueue,
@@ -26,7 +29,8 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
         WEBHOOK: webhookQueue
     }
 
-    await queueMap[channel].add(`send-${channel.toLowerCase()}` , { notification_id: notification.id },{
+    await queueMap[channel].add(`send-${channel.toLowerCase()}` ,{ notification_id: notification.id },{
+    delay,
     attempts: 3,
     backoff: {
         type: 'custom',

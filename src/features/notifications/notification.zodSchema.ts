@@ -6,7 +6,7 @@ const rawSchema = z.object({
     channel: z.enum([Channel.EMAIL, Channel.INAPP, Channel.WEBHOOK]),
     recipient:z.string(),
     variables: z.record(z.string(), z.unknown()).optional(),
-    subject:z.string().optional()
+    subject:z.string().optional(),
     scheduledFor:z.coerce.date().optional()
 })
 
