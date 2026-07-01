@@ -3,6 +3,7 @@ import { bullmqConnection } from '../config/bullmq.config.js';
 import logger from '../utils/logger.js';
 import { prisma } from '../config/PrismaClient.js';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
+import { successfulRequestsCounter } from '../monitoring/metrics.js';
 
 const worker = new Worker('inapp-queue',async job => {
 
@@ -47,6 +48,7 @@ const worker = new Worker('inapp-queue',async job => {
 );
 
   worker.on('completed',async job => { //fires after the processor function finishes without throwing.
+    successfulRequestsCounter.inc({channel:"EMAIL",tenant_id:job.data.tenant_id})
     logger.info(`${job.id} for inapp has completed!`);
   });
 

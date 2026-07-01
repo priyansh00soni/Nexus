@@ -71,7 +71,7 @@ const worker = new Worker('email-queue',async job => {
             error: error instanceof Error ? error.message : String(error)
         })
     }
-    
+     
     //backoff settings
 
   },{ connection: bullmqConnection,
