@@ -5,6 +5,7 @@ import { prisma } from '../config/PrismaClient.js';
 import ApiError from '../utils/ApiError.js';
 import { Resend } from 'resend';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
+import { successfulRequestsCounter } from '../monitoring/metrics.js';
 
 const worker = new Worker('email-queue',async job => {
 
@@ -84,6 +85,7 @@ const worker = new Worker('email-queue',async job => {
 
   worker.on('completed',async job => { //fires after the processor function finishes without throwing.
     try {
+      successfulRequestsCounter.inc({channel:"EMAIL",tenant_id:job.data.tenant_id})
       await prisma.notification.update({
         where:{id: job?.data.notification_id},
           data:{
