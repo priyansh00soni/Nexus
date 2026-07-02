@@ -8,7 +8,7 @@ const router = Router()
 
 router.route('/').post(authMid,validate(createTemplateSchema),createTemplateController)
 router.route('/:template_id').get(authMid,getTemplateController)
-.put(authMid,validate(updateTemplateSchema),updateTemplateController)
+.patch(authMid,validate(updateTemplateSchema),updateTemplateController)
 .delete(authMid,deleteTemplateController)
 
 export default router
