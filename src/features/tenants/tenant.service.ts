@@ -1,9 +1,8 @@
 import { prisma } from "../../config/PrismaClient.js";
-import ApiError from "../../utils/ApiError.js";
 import generateApiKey from "../../utils/generateApiKey.js";
 import hashApiKey from "../../utils/hashApiKey.js";
 
-const createTenant = async(name: string, from_email:string)=>{
+const createTenant = async(name: string, from_email?:string)=>{
     const rawKey = generateApiKey()
     const hashedKey= hashApiKey(rawKey)
     
@@ -11,7 +10,7 @@ const createTenant = async(name: string, from_email:string)=>{
         const tenant = await tx.tenant.create({
             data:{
                 name,
-                from_email
+                ...(from_email ? {from_email} : {}),
             }
         })
 
