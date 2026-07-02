@@ -5,6 +5,10 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import logger from "../utils/logger.js";
 import { redis } from "../config/redis.js";
+import register, { queueDepth } from "./metrics.js";
+import { emailQueue } from "../queues/email.queue.js";
+import { inappQueue } from "../queues/inapp.queue.js";
+import { webhookQueue } from "../queues/webhook.queue.js";
 
 const healthCheck = asyncHandler(async(req:Request,res:Response)=>{
     try {
@@ -26,4 +30,20 @@ const healthCheck = asyncHandler(async(req:Request,res:Response)=>{
     )
 })
 
-export {healthCheck}
+const setMetrics = asyncHandler( async(req:Request,res:Response)=>{
+
+    const [emailCount, inappCount, webhookCount] = await Promise.all([
+        emailQueue.getJobCounts(),
+        inappQueue.getJobCounts(),
+        webhookQueue.getJobCounts(),
+    ])
+
+    queueDepth.set({queue_name:"email"}, Number(emailCount.waiting) )
+    queueDepth.set({queue_name:"inapp"}, Number(inappCount.waiting) )
+    queueDepth.set({queue_name:"webhook"}, Number(webhookCount.waiting) )
+
+    res.set('Content-Type',register.contentType)
+    res.send(await register.metrics())
+})
+
+export {healthCheck,setMetrics}
