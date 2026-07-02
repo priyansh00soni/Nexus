@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { Channel } from '../../generated/prisma/enums.js'
+import { channel } from 'node:diagnostics_channel'
 
 const rawSchema = z.object({
     message: z.string(),
@@ -12,6 +13,7 @@ const rawSchema = z.object({
 
 const templateSchema = z.object({
     recipient:z.string(),
+    channel: z.enum([Channel.EMAIL, Channel.INAPP, Channel.WEBHOOK]),
     template_id: z.string(),
     variables: z.record(z.string(), z.unknown()).optional(),
     subject:z.string().optional(),
