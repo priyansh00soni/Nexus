@@ -5,9 +5,9 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import ApiError from "../../utils/ApiError.js";
 
 const createTemplateController = asyncHandler(async(req:Request, res:Response)=>{
-    const {message, channel} = req.body
+    const {message, channel, subject} = req.body
     const tenant_id = req.tenant?.id
-    const template = await createTemplate(message,channel,tenant_id)
+    const template = await createTemplate(message,channel,tenant_id,subject)
     return res.status(201).json(new ApiResponse(201,template,"Template created successfully"))
 })
 

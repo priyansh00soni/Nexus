@@ -1,12 +1,13 @@
 import { prisma } from "../../config/PrismaClient.js"
 import ApiError from "../../utils/ApiError.js"
 
-const createTemplate = async(message:string, channel: ("WEBHOOK" | "INAPP" | "EMAIL"), tenant_id:string)=>{
+const createTemplate = async(message:string, channel: ("WEBHOOK" | "INAPP" | "EMAIL"), tenant_id:string, subject?:string)=>{
     const template = await prisma.template.create({
         data:{
             message,
             channel,
-            tenant_id
+            tenant_id,
+            ...(subject  ? {subject } : {}),
         }
     })
 
