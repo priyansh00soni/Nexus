@@ -7,10 +7,11 @@ import { Resend } from 'resend';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
 import { duration, failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
 
+
 const worker = new Worker('email-queue',async job => {
 
       const end = duration.startTimer({channel:'EMAIL'})
-    
+
       const {subjectString, messageString, notification} =await resolveNotificationMessage(job.data.notification_id)
       if(!subjectString) throw new ApiError(400,"Subject not provided")
       

@@ -32,17 +32,23 @@ services:
       - postgres
       - redis
 
-  worker:
+  worker-1:
     build: .
     command: node dist/worker.js
-    env_file:
-      - .env
-    restart: always
-    depends_on:
-      - postgres
-      - redis
-    deploy:
-      replicas: 3
+    ports:
+      - "9101:9101"
+
+  worker-2:
+    build: .
+    command: node dist/worker.js
+    ports:
+      - "9102:9101"
+
+  worker-3:
+    build: .
+    command: node dist/worker.js
+    ports:
+      - "9103:9101"
 
   prometheus:
     image: prom/prometheus
