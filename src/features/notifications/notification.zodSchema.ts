@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { Channel } from '../../generated/prisma/enums.js'
-import { channel } from 'node:diagnostics_channel'
 
 const rawSchema = z.object({
     message: z.string(),
@@ -20,9 +19,15 @@ const templateSchema = z.object({
     scheduledFor: z.coerce.date().optional()
 })
 
+export const getNotificationStatusSchema = z.object({
+    notification_id:z.string({ error: "Notification ID is required" })
+})
+
 export const createNotificationSchema = z.union([rawSchema,templateSchema]).refine(
     (data) => !('template_id' in data && 'message' in data),
     { message: "Provide either template_id or message, not both" }
 )
 
 export type CreateNotificationInput = z.infer<typeof createNotificationSchema>
+
+export type getNotificationStatusInput = z.infer<typeof getNotificationStatusSchema>

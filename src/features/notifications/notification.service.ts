@@ -2,6 +2,7 @@ import { prisma } from "../../config/PrismaClient.js"
 import { emailQueue } from "../../queues/email.queue.js"
 import { inappQueue } from "../../queues/inapp.queue.js"
 import { webhookQueue } from "../../queues/webhook.queue.js"
+import ApiError from "../../utils/ApiError.js"
 
 const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:Date)=>{
 
@@ -40,4 +41,16 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
     return notification
 }
 
-export {createNotification}
+const getNotificationStatus = async(notification_id:string,tenant_id:string)=>{
+
+    const status = await prisma.notification.findFirst({
+        where:{id:notification_id, tenant_id:tenant_id},
+        include: { delivery_attempts: true }
+    })
+
+    if(!status) throw new ApiError(404, "Notification not found")
+
+    return status
+}
+
+export {createNotification, getNotificationStatus}
