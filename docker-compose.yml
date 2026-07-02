@@ -37,18 +37,36 @@ services:
     command: node dist/worker.js
     ports:
       - "9101:9101"
+    env_file:
+      - .env
+    depends_on:
+    - postgres
+    - redis
+    restart: always
 
   worker-2:
     build: .
     command: node dist/worker.js
     ports:
       - "9102:9101"
+    env_file:
+      - .env
+    depends_on:
+    - postgres
+    - redis
+    restart: always
 
   worker-3:
     build: .
     command: node dist/worker.js
     ports:
       - "9103:9101"
+    env_file:
+      - .env
+    depends_on:
+    - postgres
+    - redis
+    restart: always
 
   prometheus:
     image: prom/prometheus

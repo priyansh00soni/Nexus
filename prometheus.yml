@@ -17,6 +17,6 @@ scrape_configs:
     static_configs:
       - targets: ["api:8000"]
 
-  - job_name: 'nexus-workers'
-  static_configs:
+  - job_name: nexus-workers
+    static_configs:
     - targets: ['worker-1:9101', 'worker-2:9101', 'worker-3:9101']
