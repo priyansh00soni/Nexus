@@ -20,7 +20,7 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
 
     if(requestHash!== incomingReqHash) throw new ApiError(409,"Please use different idempotency key.")
     
-    if(responseBody) return res.status(200).json(new ApiResponse(201,responseBody,"Notification created Successfully."))
+    if(responseBody) return res.status(200).json(responseBody)
     }
         
     const idempotencyRecord =await prisma.idempotencyRecord.findUnique({
@@ -32,7 +32,7 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
 
         if(idempotencyRecord.status=="PROCESSING") return res.status(409).json(new ApiResponse(409,"Request is already being processed"))
         
-        if(idempotencyRecord.response_body) return res.status(200).json(new ApiResponse(201,idempotencyRecord.response_body,"Notification created Successfully."))
+        if(idempotencyRecord.response_body) return res.status(200).json(idempotencyRecord.response_body)
     }
 
     await prisma.idempotencyRecord.create({

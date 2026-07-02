@@ -25,7 +25,7 @@ const worker = new Worker('email-queue',async job => {
         const resend = new Resend(process.env.RESEND_API_KEY);
         
         await resend.emails.send({
-          from: "onboarding@resend.dev",
+          from: "priyansh@priyanshsoni.me",
           to: notification.recipient,
           subject: subjectString,
           html: messageString
