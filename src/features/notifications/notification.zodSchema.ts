@@ -14,7 +14,8 @@ const templateSchema = z.object({
     recipient:z.string(),
     template_id: z.string(),
     variables: z.record(z.string(), z.unknown()).optional(),
-    subject:z.string().optional()
+    subject:z.string().optional(),
+    scheduledFor: z.coerce.date().optional()
 })
 
 export const createNotificationSchema = z.union([rawSchema,templateSchema]).refine(

@@ -5,9 +5,9 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import ApiError from "../../utils/ApiError.js";
 
 const createTemplateController = asyncHandler(async(req:Request, res:Response)=>{
-    const {message, channel, subject} = req.body
+    const {message, subject} = req.body
     const tenant_id = req.tenant?.id
-    const template = await createTemplate(message,channel,tenant_id,subject)
+    const template = await createTemplate(message,tenant_id,subject)
     return res.status(201).json(new ApiResponse(201,template,"Template created successfully"))
 })
 
@@ -22,9 +22,9 @@ const getTemplateController = asyncHandler(async(req:Request, res:Response)=>{
 const updateTemplateController = asyncHandler(async(req:Request, res:Response)=>{
     const template_id = req.params.template_id as string
     if(!template_id) throw new ApiError(400,"Please provide template id.")
-    const {message,channel,subject} = req.body
+    const {message,subject} = req.body
     const tenant_id = req.tenant.id
-    const template = await updateTemplate(template_id,tenant_id, message, channel,subject)
+    const template = await updateTemplate(template_id,tenant_id, message,subject)
     return res.status(200).json(new ApiResponse(200,template,"Template Updated Successfully."))
 })
 

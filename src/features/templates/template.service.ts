@@ -1,11 +1,10 @@
 import { prisma } from "../../config/PrismaClient.js"
 import ApiError from "../../utils/ApiError.js"
 
-const createTemplate = async(message:string, channel: ("WEBHOOK" | "INAPP" | "EMAIL"), tenant_id:string, subject?:string)=>{
+const createTemplate = async(message:string,tenant_id:string, subject?:string)=>{
     const template = await prisma.template.create({
         data:{
             message,
-            channel,
             tenant_id,
             ...(subject  ? {subject } : {}),
         }
@@ -22,12 +21,11 @@ const getTemplate = async(template_id:string, tenant_id:string) =>{
     return template
 }
 
-const updateTemplate = async(template_id:string, tenant_id:string, message?:string ,subject?: string, channel?: ("WEBHOOK" | "INAPP" | "EMAIL"))=>{
+const updateTemplate = async(template_id:string, tenant_id:string, message?:string ,subject?: string)=>{
     const template = await prisma.template.update({
         where:{id:template_id,tenant_id},
         data:{
            ...(message ? {message} : {}),
-           ...(channel ? {channel} : {}),
            ...(subject ? {subject} : {})
         }
     }) 
