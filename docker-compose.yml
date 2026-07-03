@@ -74,6 +74,7 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     depends_on:
       - api
     restart: always
@@ -85,9 +86,11 @@ services:
     depends_on:
       - prometheus
     restart: always
+    volumes:
+    - grafana_data:/var/lib/grafana
     
 volumes:
   postgres_data:
   redis_data:
-
-  
+  prometheus_data:
+  grafana_data:
