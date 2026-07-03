@@ -53,4 +53,23 @@ const getNotificationStatus = async(notification_id:string,tenant_id:string)=>{
     return status
 }
 
-export {createNotification, getNotificationStatus}
+const getNotifications = async(tenant_id:string,page:number,limit:number,sortType:'asc' | 'desc',sortBy:string,status?:("PROCESSING"|"FAILED"|"COMPLETED"),channel?: ("WEBHOOK" | "INAPP" | "EMAIL"),from?:Date,to?:Date)=>{
+
+    const notifications = await prisma.notification.findMany({
+        where:{tenant_id:tenant_id,
+            ...(status ? {status} : {}),
+            ...(channel ? {channel} : {}),
+            ...(from ? { created_at: { gte: from } } : {}),
+            ...(to ? { created_at: { lte: to } } : {}),
+        },
+        include:{delivery_attempts:true},
+        orderBy:{[sortBy]:sortType},
+        skip:limit*(page-1),
+        take:limit,
+    })
+
+    return notifications
+
+}
+
+export {createNotification, getNotificationStatus,getNotifications}
