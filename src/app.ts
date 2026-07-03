@@ -13,9 +13,9 @@ app.use(
     })
 )
 
-app.use(express.json({limit: '16kb'}))
+app.use(express.json({limit: '5mb'}))
 
-app.use(express.urlencoded({ extended:true, limit:'16kb'}))
+app.use(express.urlencoded({ extended:true, limit:'5mb'}))
 
 app.use(express.static('public'))
 
