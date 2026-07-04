@@ -53,9 +53,10 @@ const worker = new Worker('webhook-queue',async job => {
               })
             ])
           } catch (error) {
-              logger.error("DB update Failed in webhook job.",{
-                  error: error instanceof Error ? error.message : String(error)
-              })
+              logger.error("DB update Failed in webhook job.", {
+                error: error instanceof Error ? error.message : String(error),
+                correlationId: job.data.correlationId,
+              });
           }
           
           throw error
@@ -71,9 +72,10 @@ const worker = new Worker('webhook-queue',async job => {
             }
         })
     } catch (error) {
-        logger.error("DB update Failed in WEBHOOK job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in WEBHOOK job.", {
+          error: error instanceof Error ? error.message : String(error),
+          correlationId: job.data.correlationId,
+        });
     }
 
     end()
@@ -98,10 +100,13 @@ worker.on('completed',async job => { //fires after the processor function finish
             status:"COMPLETED"
           }
       })
-      logger.info(`${job.id} for webhook has completed!`);
+      logger.info(`${job.id} for webhook has completed!`, {
+        correlationId: job.data.correlationId,
+      });
     } catch (error) {
         logger.error("DB update Failed in WEBHOOK job.", {
           error: error instanceof Error ? error.message : String(error),
+          correlationId: job.data.correlationId,
         });
     }
 
@@ -117,11 +122,14 @@ worker.on('completed',async job => { //fires after the processor function finish
             error_message: error instanceof Error ? error.message : String(error)
           }
       })
-      logger.info(`${job?.id} has failed with ${error.message}`);
+      logger.info(`${job?.id} has failed with ${error.message}`, {
+        correlationId: job?.data.correlationId,
+      });
     } catch (error) {
-        logger.error("DB update Failed in webhook job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in webhook job.", {
+          error: error instanceof Error ? error.message : String(error),
+          correlationId: job?.data.correlationId,
+        });
     }
   });
 

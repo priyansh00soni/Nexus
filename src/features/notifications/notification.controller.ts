@@ -5,8 +5,9 @@ import ApiResponse from "../../utils/ApiResponse.js";
 
 const createNotificationController  = asyncHandler(async(req:Request, res:Response)=>{
     const {message, template_id, recipient, channel, variables, subject,scheduledFor} = req.body
+    const correlationId =req.correlationId
     const tenant_id= req.tenant.id
-    const notification = await createNotification(tenant_id, recipient, channel, template_id, message, variables, subject, scheduledFor)
+    const notification = await createNotification(tenant_id, recipient, channel, template_id, message, variables, subject, scheduledFor,correlationId)
     return res.status(201).json(new ApiResponse(201,notification,"Notification created Successfully."))
 })
 

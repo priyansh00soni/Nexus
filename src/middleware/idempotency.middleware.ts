@@ -51,12 +51,12 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
             `idempotency:${req.tenant.id}:${idempotencyKey}`,
             JSON.stringify({requestHash:incomingReqHash, responseBody:data}),
             'EX',86400
-        ).catch(err => logger.error("Redis cache failed", {error:err.message}))
+        ).catch(err => logger.error("Redis cache failed", {error:err.message, correlationId: req.correlationId }))
 
         prisma.idempotencyRecord.update({
             where:{idempotency_key_tenant_id:{idempotency_key:idempotencyKey, tenant_id:req.tenant.id}},
             data:{status:"COMPLETED", response_body:data}
-        }).catch(err => logger.error("DB update failed", { error: err.message }))
+        }).catch(err => logger.error("DB update failed", { error: err.message, correlationId: req.correlationId  }))
 
         return originalJson(data)
     }

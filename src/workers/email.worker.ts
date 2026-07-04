@@ -52,7 +52,7 @@ const worker = new Worker('email-queue',async job => {
             ])
           } catch (error) {
               logger.error("DB update Failed in email job.",{
-                  error: error instanceof Error ? error.message : String(error)
+                  error: error instanceof Error ? error.message : String(error), correlationId: job.data.correlationId 
               })
           }
           
@@ -70,9 +70,10 @@ const worker = new Worker('email-queue',async job => {
             }
         })
     } catch (error) {
-        logger.error("DB update Failed in email job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in email job.", {
+          error: error instanceof Error ? error.message : String(error),
+          correlationId: job.data.correlationId,
+        });
     }
 
     end()
@@ -97,11 +98,14 @@ const worker = new Worker('email-queue',async job => {
             status:"COMPLETED"
           }
       })
-      logger.info(`${job.id} for email has completed!`);
+      logger.info(`${job.id} for email has completed!`, {
+        correlationId: job.data.correlationId,
+      });
     } catch (error) {
-        logger.error("DB update Failed in email job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in email job.", {
+          error: error instanceof Error ? error.message : String(error),
+          correlationId: job.data.correlationId,
+        });
     }
 
   });
@@ -116,10 +120,13 @@ const worker = new Worker('email-queue',async job => {
             error_message: error instanceof Error ? error.message : String(error)
           }
       })
-      logger.info(`${job?.id} has failed with ${error.message}`);
+      logger.info(`${job?.id} has failed with ${error.message}`, {
+        correlationId: job?.data.correlationId,
+      });
     } catch (error) {
-        logger.error("DB update Failed in email job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in email job.", {
+          error: error instanceof Error ? error.message : String(error),
+          correlationId: job?.data.correlationId,
+        });
     }
   });

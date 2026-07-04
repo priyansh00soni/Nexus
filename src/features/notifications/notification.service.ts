@@ -4,7 +4,7 @@ import { inappQueue } from "../../queues/inapp.queue.js"
 import { webhookQueue } from "../../queues/webhook.queue.js"
 import ApiError from "../../utils/ApiError.js"
 
-const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:Date)=>{
+const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:Date,correlationId?:string)=>{
 
 
     const notification = await prisma.notification.create({
@@ -30,7 +30,7 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
         WEBHOOK: webhookQueue
     }
 
-    await queueMap[channel].add(`send-${channel.toLowerCase()}` ,{ notification_id: notification.id, tenant_id },{
+    await queueMap[channel].add(`send-${channel.toLowerCase()}` ,{ notification_id: notification.id, tenant_id,correlationId },{
     delay,
     attempts: 3,
     backoff: {

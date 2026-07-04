@@ -9,7 +9,7 @@ const worker = new Worker('inapp-queue',async job => {
 
     const end = duration.startTimer({channel:'INAPP'})
 
-    const {subjectString, messageString, notification}=await resolveNotificationMessage(job.data.notification_id)
+    const {subjectString, messageString}=await resolveNotificationMessage(job.data.notification_id)
 
     //Inapp notification - The notification is already in the DB from when it was created. The worker just marks it as delivered. When the user opens the app, they call GET /notifications/inapp and your API returns all their notifications from DB.
 
@@ -37,6 +37,7 @@ const worker = new Worker('inapp-queue',async job => {
     } catch (error) {
       logger.error("DB update Failed in INAPP job.", {
         error: error instanceof Error ? error.message : String(error),
+        correlationId: job.data.correlationId,
       });
     }
 
@@ -53,7 +54,7 @@ const worker = new Worker('inapp-queue',async job => {
 
   worker.on('completed',async job => { //fires after the processor function finishes without throwing.
     successfulRequestsCounter.inc({channel:"INAPP",tenant_id:job.data.tenant_id})
-    logger.info(`${job.id} for inapp has completed!`);
+    logger.info(`${job.id} for inapp has completed!`, { correlationId: job.data.correlationId });
   });
 
   worker.on('failed',async (job, error) => { //fires after a job fails AND has exhausted all retries.
@@ -66,10 +67,11 @@ const worker = new Worker('inapp-queue',async job => {
             error_message: error instanceof Error ? error.message : String(error)
           }
       })
-      logger.info(`${job?.id} has failed with ${error.message}`);
+      logger.info(`${job?.id} has failed with ${error.message}`, { correlationId: job?.data.correlationId });
     } catch (error) {
-        logger.error("DB update Failed in inApp job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in inApp job.", {
+          error: error instanceof Error ? error.message : String(error),
+          correlationId: job?.data.correlationId,
+        });
     }
   });

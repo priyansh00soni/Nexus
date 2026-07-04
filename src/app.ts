@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import ApiError from "./utils/ApiError.js";
 const app:Express = express()
 
+app.use(correlationID)
+
 app.use(
     cors({
         origin:process.env.CORS_ORIGIN,
@@ -35,6 +37,7 @@ app.use('/api/v1/notification',NotificationRouter)
 
 
 import { Prisma } from "./generated/prisma/client.js";
+import { correlationID } from "./middleware/correlationID.middleware.js";
 
 app.use((err:ApiError | Error,req:Request,res:Response,next:NextFunction)=>{
 
