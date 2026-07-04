@@ -3,7 +3,6 @@ import { bullmqConnection } from '../config/bullmq.config.js';
 import logger from '../utils/logger.js';
 import { prisma } from '../config/PrismaClient.js';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
-import ApiError from '../utils/ApiError.js';
 import { duration, failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
 
 const worker = new Worker('webhook-queue',async job => {
