@@ -3,11 +3,11 @@ import { bullmqConnection } from '../config/bullmq.config.js';
 import logger from '../utils/logger.js';
 import { prisma } from '../config/PrismaClient.js';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
-import { duration, successfulRequestsCounter } from '../monitoring/metrics.js';
+import { duration, failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
 
 const worker = new Worker('inapp-queue',async job => {
 
-    const end = duration.startTimer({channel:'EMAIL'})
+    const end = duration.startTimer({channel:'INAPP'})
 
     const {subjectString, messageString, notification}=await resolveNotificationMessage(job.data.notification_id)
 
@@ -35,9 +35,9 @@ const worker = new Worker('inapp-queue',async job => {
         })
       ])
     } catch (error) {
-      logger.error("DB update Failed in email job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+      logger.error("DB update Failed in INAPP job.", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
 
     end()
@@ -52,12 +52,13 @@ const worker = new Worker('inapp-queue',async job => {
 );
 
   worker.on('completed',async job => { //fires after the processor function finishes without throwing.
-    successfulRequestsCounter.inc({channel:"EMAIL",tenant_id:job.data.tenant_id})
+    successfulRequestsCounter.inc({channel:"INAPP",tenant_id:job.data.tenant_id})
     logger.info(`${job.id} for inapp has completed!`);
   });
 
   worker.on('failed',async (job, error) => { //fires after a job fails AND has exhausted all retries.
     try {
+      failedRequestsCounter.inc({channel:"INAPP",tenant_id:job?.data.tenant_id})
       await prisma.notification.update({
         where:{id: job?.data.notification_id},
           data:{

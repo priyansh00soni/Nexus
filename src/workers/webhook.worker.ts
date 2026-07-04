@@ -8,7 +8,7 @@ import { duration, failedRequestsCounter, successfulRequestsCounter } from '../m
 
 const worker = new Worker('webhook-queue',async job => {
 
-    const end = duration.startTimer({channel:'EMAIL'})
+    const end = duration.startTimer({channel:'WEBHOOK'})
 
     const { messageString, notification} =await resolveNotificationMessage(job.data.notification_id)
 
@@ -71,7 +71,7 @@ const worker = new Worker('webhook-queue',async job => {
             }
         })
     } catch (error) {
-        logger.error("DB update Failed in email job.",{
+        logger.error("DB update Failed in WEBHOOK job.",{
             error: error instanceof Error ? error.message : String(error)
         })
     }
@@ -91,7 +91,7 @@ const worker = new Worker('webhook-queue',async job => {
 
 worker.on('completed',async job => { //fires after the processor function finishes without throwing.
     try {
-      successfulRequestsCounter.inc({channel:"EMAIL",tenant_id:job.data.tenant_id})
+      successfulRequestsCounter.inc({channel:"WEBHOOK",tenant_id:job.data.tenant_id})
       await prisma.notification.update({
         where:{id: job?.data.notification_id},
           data:{
@@ -100,16 +100,16 @@ worker.on('completed',async job => { //fires after the processor function finish
       })
       logger.info(`${job.id} for webhook has completed!`);
     } catch (error) {
-        logger.error("DB update Failed in email job.",{
-            error: error instanceof Error ? error.message : String(error)
-        })
+        logger.error("DB update Failed in WEBHOOK job.", {
+          error: error instanceof Error ? error.message : String(error),
+        });
     }
 
   });
 
   worker.on('failed',async (job, error) => { //fires after a job fails AND has exhausted all retries.
     try {
-      failedRequestsCounter.inc({channel:"EMAIL",tenant_id:job?.data.tenant_id})
+      failedRequestsCounter.inc({channel:"WEBHOOK",tenant_id:job?.data.tenant_id})
       await prisma.notification.update({
         where:{id: job?.data.notification_id},
           data:{
