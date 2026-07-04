@@ -36,9 +36,7 @@ services:
     build: .
     command: node dist/worker.js
     environment:
-      - WORKER_ID: worker-1
-    ports:
-      - "9101:9101"
+      WORKER_ID: worker-1
     env_file:
       - .env
     depends_on:
@@ -50,9 +48,7 @@ services:
     build: .
     command: node dist/worker.js
     environment:
-      - WORKER_ID: worker-2
-    ports:
-      - "9102:9101"
+      WORKER_ID: worker-2
     env_file:
       - .env
     depends_on:
@@ -64,9 +60,7 @@ services:
     build: .
     command: node dist/worker.js
     environment:
-      - WORKER_ID: worker-3
-    ports:
-      - "9103:9101"
+      ORKER_ID: worker-3
     env_file:
       - .env
     depends_on:
