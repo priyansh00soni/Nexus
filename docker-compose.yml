@@ -35,6 +35,8 @@ services:
   worker-1:
     build: .
     command: node dist/worker.js
+    environment:
+      - WORKER_ID: worker-1
     ports:
       - "9101:9101"
     env_file:
@@ -47,6 +49,8 @@ services:
   worker-2:
     build: .
     command: node dist/worker.js
+    environment:
+      - WORKER_ID: worker-2
     ports:
       - "9102:9101"
     env_file:
@@ -59,6 +63,8 @@ services:
   worker-3:
     build: .
     command: node dist/worker.js
+    environment:
+      - WORKER_ID: worker-3
     ports:
       - "9103:9101"
     env_file:
