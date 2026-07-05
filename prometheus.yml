@@ -13,14 +13,14 @@ scrape_configs:
     metrics_path: '/api/v1/monitoring/metrics'
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
-    scheme: https #production
+
 
     static_configs:
       #local - targets: ["api:8000"]
       - targets: ["nexus-api-ci20.onrender.com"]
 
   - job_name: nexus-workers
-    scheme: https #production
+
     static_configs:
     #local - targets: ['worker-1:', 'worker-2:9101', 'worker-3:9101']
       - targets: ['nexus-worker-gqfe.onrender.com']
