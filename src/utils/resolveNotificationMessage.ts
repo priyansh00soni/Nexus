@@ -1,4 +1,4 @@
-import { prisma } from "../config/PrismaClient.js"
+import { prisma } from "../config/prismaClient.js"
 import ApiError from "./ApiError.js"
 import { templateRenderer } from "./templateRenderer.js"
 

@@ -1,4 +1,4 @@
-import { prisma } from "../../config/PrismaClient.js"
+import { prisma } from "../../config/prismaClient.js"
 import ApiError from "../../utils/ApiError.js"
 
 const createTemplate = async(message:string,tenant_id:string, subject?:string)=>{

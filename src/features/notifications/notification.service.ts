@@ -1,4 +1,4 @@
-import { prisma } from "../../config/PrismaClient.js"
+import { prisma } from "../../config/prismaClient.js"
 import { emailQueue } from "../../queues/email.queue.js"
 import { inappQueue } from "../../queues/inapp.queue.js"
 import { webhookQueue } from "../../queues/webhook.queue.js"

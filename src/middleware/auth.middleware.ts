@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
-import { prisma } from "../config/PrismaClient.js";
+import { prisma } from "../config/prismaClient.js";
 import hashApiKey from "../utils/hashApiKey.js";
 
 const authMid = asyncHandler(async(req:Request,res:Response,next:NextFunction)=>{

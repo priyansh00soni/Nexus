@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler.js";
 import crypto from 'crypto'
 import { redis } from "../config/redis.js";
-import { prisma } from "../config/PrismaClient.js";
+import { prisma } from "../config/prismaClient.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import logger from "../utils/logger.js";

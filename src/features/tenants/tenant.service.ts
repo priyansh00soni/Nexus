@@ -1,4 +1,4 @@
-import { prisma } from "../../config/PrismaClient.js";
+import { prisma } from "../../config/prismaClient.js";
 import generateApiKey from "../../utils/generateApiKey.js";
 import hashApiKey from "../../utils/hashApiKey.js";
 
