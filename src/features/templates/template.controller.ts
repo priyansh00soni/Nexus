@@ -4,6 +4,7 @@ import {createTemplate, deleteTemplate, getTemplate, updateTemplate} from "./tem
 import ApiResponse from "../../utils/ApiResponse.js";
 import ApiError from "../../utils/ApiError.js";
 
+
 const createTemplateController = asyncHandler(async(req:Request, res:Response)=>{
     const {message, subject} = req.body
     const tenant_id = req.tenant?.id
