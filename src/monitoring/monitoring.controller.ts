@@ -46,4 +46,11 @@ const setMetrics = asyncHandler( async(req:Request,res:Response)=>{
     res.send(await register.metrics())
 })
 
-export {healthCheck,setMetrics}
+const getDLQ = asyncHandler(async(req:Request,res:Response)=>{
+    const emailDLQ = await emailQueue.getFailed()
+    const inappDLQ=await inappQueue.getFailed()
+    const webhookDLQ=await webhookQueue.getFailed()
+     return res.status(200).json(new ApiResponse(200,{emailDLQ,inappDLQ, webhookDLQ},"DLQ fetched Successfully")) 
+})
+
+export {healthCheck,setMetrics, getDLQ}
