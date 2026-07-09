@@ -4,6 +4,7 @@ import logger from '../utils/logger.js';
 import { prisma } from '../config/prismaClient.js';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
 import { duration, failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
+import { backoff } from '../utils/backoff.js';
 
 const worker = new Worker('webhook-queue',async job => {
 
@@ -84,7 +85,7 @@ const worker = new Worker('webhook-queue',async job => {
   },{ connection: bullmqConnection,
       settings: {
             backoffStrategy: (attemptsMade) => {
-                return Math.min(1000 * 2 ** attemptsMade, 30000)
+                return backoff(attemptsMade)
         }
       } 
     }
