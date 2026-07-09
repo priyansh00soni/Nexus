@@ -6,6 +6,7 @@ import ApiError from '../utils/ApiError.js';
 import { Resend } from 'resend';
 import { resolveNotificationMessage } from '../utils/resolveNotificationMessage.js';
 import { duration, failedRequestsCounter, successfulRequestsCounter } from '../monitoring/metrics.js';
+import { backoff } from '../utils/backoff.js';
 
 
 const worker = new Worker('email-queue',async job => {
@@ -83,7 +84,7 @@ const worker = new Worker('email-queue',async job => {
   },{ connection: bullmqConnection,
       settings: {
             backoffStrategy: (attemptsMade) => {
-                return Math.min(1000 * 2 ** attemptsMade, 30000)
+               return backoff(attemptsMade)
         }
       } 
     }
