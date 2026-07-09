@@ -16,9 +16,12 @@
 [![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?style=flat-square&logo=grafana&logoColor=white)](https://grafana.com/)
 [![Live on Render](https://img.shields.io/badge/Live-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://nexus-api-ci20.onrender.com/api/v1/monitoring/health)
 
-**[🚀 Live API](https://nexus-api-ci20.onrender.com) · [📊 Health Check](https://nexus-api-ci20.onrender.com/api/v1/monitoring/health) · [👤 Built by Priyansh Soni](https://github.com/priyansh00soni)**
+**[🚀 Live API](https://nexus-api-ci20.onrender.com) · [📊 Health Check](https://nexus-api-ci20.onrender.com/api/v1/monitoring/health)**
 
-> 🎬 **[Watch the SaaS Demo Video](https://res.cloudinary.com/dospcif0y/video/upload/v1783580318/nexus_V1_cwvkbt.mp4)**
+
+https://github.com/user-attachments/assets/7694d32e-ec4d-4154-9ccf-648926e55634
+
+
 
 </div>
 
