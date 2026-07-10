@@ -22,9 +22,20 @@ const healthCheck = asyncHandler(async(req:Request,res:Response)=>{
         await redis.ping()
     } catch (error:any) {
         logger.error("Health Check Redis Failure Details:",error)
-        throw new ApiError(500,"Something wet wrong while connecting to Redis.",error.message)
+        throw new ApiError(500,"Something went wrong while connecting to Redis.",error.message)
     }
 
+
+    try {
+    await Promise.all([
+        emailQueue.getJobCounts(),
+        inappQueue.getJobCounts(),
+        webhookQueue.getJobCounts(),
+    ])
+    } catch (error: any) {
+        logger.error("Health Check Queue Failure Details:", error)
+        throw new ApiError(500, "Something went wrong while connecting to queues.", error.message)
+    }
     return res.status(200).json(
         new ApiResponse(200 , {status: "OK"}, "App running Smoothly.")
     )
