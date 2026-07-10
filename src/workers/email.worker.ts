@@ -70,6 +70,9 @@ const worker = new Worker('email-queue',async job => {
               status:"COMPLETED",
             }
         })
+        logger.info("Notification sent for email job.", {
+          correlationId: job.data.correlationId,messageString
+        });
     } catch (error) {
         logger.error("DB update Failed in email job.", {
           error: error instanceof Error ? error.message : String(error),
