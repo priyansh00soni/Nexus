@@ -15,7 +15,7 @@ export default function () {
     const res = http.post('https://nexus-api-ci20.onrender.com/api/v1/notification',
     JSON.stringify({
       recipient: 'test@example.com',
-      channel: 'EMAIL',
+      channel: 'INAPP',
       message: 'Load test',
       subject: 'k6 Test'
     }),
