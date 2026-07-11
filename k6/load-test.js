@@ -11,7 +11,7 @@ export const options = {
 
 export default function () {
     
-    const res = http.post('https://your-api.railway.app/api/v1/notifications', 
+    const res = http.post('https://nexus-api-ci20.onrender.com/api/v1/notifications', 
     JSON.stringify({
       recipient: 'test@example.com',
       channel: 'EMAIL',
