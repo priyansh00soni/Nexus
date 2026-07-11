@@ -5,6 +5,8 @@ import ApiError from "../utils/ApiError.js";
 
 const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)=>{
     
+    if (process.env.NODE_ENV === 'test') return next()
+    
     //works for per tenant, uses sorted set. - sliding window rate limiting.
     const key = `rateLimit:${req.tenant.id}`
     const now =Date.now()
