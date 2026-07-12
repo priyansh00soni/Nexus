@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: nexus-api
+    metrics_path: '/api/v1/monitoring/metrics'
+    static_configs:
+      - targets: ["api:8000"]
+
+  - job_name: nexus-workers
+    scheme: http
+    static_configs:
+      - targets: ['worker-1:9101', 'worker-2:9101', 'worker-3:9101']
