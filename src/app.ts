@@ -3,6 +3,10 @@ import express from "express";
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 import ApiError from "./utils/ApiError.js";
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+
+
 const app:Express = express()
 
 app.use(correlationID)
@@ -21,6 +25,27 @@ app.use(express.urlencoded({ extended:true, limit:'5mb'}))
 app.use(express.static('public'))
 
 app.use(cookieParser())
+
+//Swagger
+
+
+const options = {
+  definition: {
+   openapi: '3.0.0',
+    info: {
+      title: 'Nexus',
+      version: '1.0.0',
+    },
+  },
+  apis: ['src/features/notifications/notification.routes.ts','src/features/templates/template.routes.ts','src/features/tenants/tenant.routes.ts','src/monitoring/monitoring.routes.ts'],
+};
+
+const swaggerSpecification = swaggerJsdoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecification));
+
+
+
 
 //Routes
 
