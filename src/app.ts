@@ -42,7 +42,7 @@ const options = {
 
 const swaggerSpecification = swaggerJsdoc(options);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecification));
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecification));
 
 
 
