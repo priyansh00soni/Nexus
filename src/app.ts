@@ -36,6 +36,15 @@ const options = {
       title: 'Nexus',
       version: '1.0.0',
     },
+    components: {
+        securitySchemes: {
+            ApiKeyAuth: {
+            type: 'apiKey',
+            in: 'header',
+            name: 'x-api-key'
+            }
+        }
+    }
   },
   apis: ['src/features/notifications/notification.routes.ts','src/features/templates/template.routes.ts','src/features/tenants/tenant.routes.ts','src/monitoring/monitoring.routes.ts'],
 };
