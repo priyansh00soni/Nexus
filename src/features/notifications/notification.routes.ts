@@ -10,7 +10,7 @@ const router = Router()
 
 /**
  * @openapi
- * /api/v1/notifications:
+ * /api/v1/notification:
  *   post:
  *     summary: Create or schedule a notification
  *     description: Send a notification using a template ID or a raw message layout.
@@ -95,7 +95,7 @@ const router = Router()
  *       401:
  *         description: Invalid or missing API key.
  *
- * /api/v1/notifications/{notification_id}:
+ * /api/v1/notification/{notification_id}:
  *   get:
  *     summary: Get tracking status of a notification
  *     security:
