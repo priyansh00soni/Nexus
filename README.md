@@ -400,6 +400,9 @@ npm run test
 
 Full request/response schemas are live at SwaggerUi : [`/api/v1/api-docs`](https://nexus-api-ci20.onrender.com/api/v1/api-docs). Summary:
 
+<img width="1476" height="953" alt="swagger" src="https://github.com/user-attachments/assets/ea1af66a-55ec-4c93-82d3-bcd0f6f49239" />
+
+
 | Endpoint | Method | Auth | Notes |
 |---|---|---|---|
 | `/api/v1/tenant` | POST |   | Creates a tenant, returns the raw API key **once** |
