@@ -10,7 +10,7 @@ const router = Router()
 
 /**
  * @openapi
- * /api/v1/notifications:
+ * /api/v1/notification:
  *   post:
  *     summary: Create or schedule a notification
  *     description: Send a notification using a template ID or a raw message layout.
