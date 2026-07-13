@@ -204,17 +204,6 @@ macOS and Windows have case-insensitive filesystems by default; Linux what Rende
 
 ## Production Bugs I Actually Fixed
 
-### The case-sensitivity crash that only happened in production
-
-**Symptom:** the app ran perfectly on my machine. Every route worked, every test passed. It crashed on Render on the very first boot, with `MODULE_NOT_FOUND`.
-
-**The chase:** the stack trace pointed at an import that clearly existed on disk I could see the file right there in the editor. Which made it worse, not better: how does a file that exists throw "module not found"?
-
-**Root cause:** the import was `./PrismaClient`, and the file on disk was `prismaClient.ts`. macOS's filesystem is case-insensitive, so that mismatch resolves silently the app never noticed. Render runs Linux, where the filesystem is case-sensitive, and the exact same import throws at startup, before a single request is served.
-
-**Fix:** audited and corrected every import path to match exact file casing.
-
-**The actual lesson:** the fix was one line. The real fix was structural I moved local development into Docker Compose, which runs Linux, so this class of bug now fails on my laptop in five seconds instead of failing on a live deploy.
 
 ### The Prometheus scraping problem that came from `replicas: 3`
 
@@ -226,11 +215,11 @@ macOS and Windows have case-insensitive filesystems by default; Linux what Rende
 
 ### The idempotency race condition that application logic alone can't close
 
-**The scenario:** a client's request times out and it retries   but the retry lands *before* the first request has finished writing its idempotency record. Both requests hit the Redis check simultaneously, both find nothing (correct, nothing's been written yet), and both proceed to process the notification. Two "Order Confirmed" emails go out. The Redis-first check didn't lie   it was accurate at the exact instant it ran; the failure is in the gap between check and write.
+**The scenario:** a client's request times out and it retries but the retry lands *before* the first request has finished writing its idempotency record. Both requests hit the Redis check simultaneously, both find nothing (correct, nothing's been written yet), and both proceed to process the notification. Two "Order Confirmed" emails go out. The Redis-first check didn't lie   it was accurate at the exact instant it ran; the failure is in the gap between check and write.
 
 **Why the obvious fix doesn't work:** adding an application-level "check, then write" guard doesn't close the window   it's still two separate operations, and two concurrent requests can both pass the check before either completes the write. This has to be enforced somewhere that can't race with itself.
 
-**Fix:** a `@@unique([idempotency_key, tenant_id])` constraint at the Postgres level. Both requests race to `INSERT` an `IdempotencyRecord`; Postgres guarantees only one succeeds, and the second gets a constraint violation   which the middleware catches and treats as a duplicate. The database, not application code, is the source of truth for "has this request already started."
+**Fix:** a `@@unique([idempotency_key, tenant_id])` constraint at the Postgres level. Both requests race to `INSERT` an `IdempotencyRecord`; Postgres guarantees only one succeeds, and the second gets a constraint violation  which the middleware catches and treats as a duplicate. The database, not application code, is the source of truth for "has this request already started."
 
 ---
 
@@ -362,10 +351,7 @@ k6 run k6/load-test.js
 
 Being upfront about the gaps is part of the engineering, not a weakness in it:
 
-- **No Outbox pattern yet.** A worker sends the email, then updates the notification's status to `COMPLETED` in a separate DB write. If the worker crashes in that exact gap, the notification was delivered but its status stays `PROCESSING` forever. The correct fix is the Outbox pattern   making the send confirmation and the DB write part of one atomic transaction. Documented, not yet implemented.
-- **No DLQ retry endpoint.** Failed jobs land in BullMQ's failed set and are viewable via `GET /api/v1/monitoring/dlq`, but replaying them currently means reaching into Redis/BullMQ directly   there's no one-click "retry" admin action yet.
-- **Rate limit ceiling is currently global, not per-tenant.** The sliding window works correctly per tenant key, but every tenant shares the same configured ceiling today; per-tenant limits are on the roadmap.
-
+- **No Outbox pattern yet.** A worker sends the email, then updates the notification's status to `COMPLETED` in a separate DB write. If the worker crashes in that exact gap, the notification was delivered but its status stays `PROCESSING` forever. The correct fix is the Outbox pattern  making the send confirmation and the DB write part of one atomic transaction. Documented, not yet implemented.
 ---
 
 ## Local Setup
