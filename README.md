@@ -30,7 +30,7 @@ Nexus is a standalone notification service that businesses call over an API to d
 
 <div align="center">
 
-`[INSERT DEMO GIF/VIDEO HERE   screen recording of: create tenant → send notification → watch it land → Grafana dashboard updating live]`
+https://github.com/user-attachments/assets/ffc2f3a7-e4a8-4e22-b034-19e223e27a37
 
 </div>
 
@@ -52,7 +52,30 @@ Nexus solves all three by being a dedicated, decoupled service: tenants register
 
 ## Architecture
 
-`[INSERT ARCHITECTURE DIAGRAM SCREENSHOT HERE]`
+````mermaid
+flowchart TD
+    A["Client<br/>POST /api/v1/notification<br/>x-api-key + Idempotency-Key"] --> B[Correlation ID]
+    B --> C[Auth: hash key → tenant]
+    C --> D[Zod validation]
+    D --> E["Idempotency<br/>Redis → Postgres fallback"]
+    E --> F["Rate limit<br/>sliding window, Redis sorted set"]
+    F --> G["Controller<br/>save Notification: PROCESSING"]
+    G -->|201, non-blocking| A
+    G --> H{channel}
+    H -->|EMAIL| Q1[Email Queue]
+    H -->|INAPP| Q2[In-App Queue]
+    H -->|WEBHOOK| Q3[Webhook Queue]
+ 
+    Q1 & Q2 & Q3 --> W["worker-1 / worker-2 / worker-3<br/>BullMQ Redis job locking"]
+    W -->|success| DB[("PostgreSQL<br/>status: COMPLETED")]
+    W -->|failure| R["Custom backoff<br/>1s→2s→4s→8s→16s (cap 30s)"]
+    R -->|3 attempts exhausted| DLQ[Dead Letter Queue]
+ 
+    W --> M["/metrics ×3<br/>ports 9101/9102/9103"]
+    G --> M2["/metrics<br/>API process — queue_depth"]
+    M & M2 --> P[Prometheus scrape + sum]
+    P --> GR[Grafana dashboards]
+````
 
 ```
 Client → POST /api/v1/notification (with x-api-key + Idempotency-Key)
@@ -223,7 +246,7 @@ Every write request carries an `Idempotency-Key` header. On arrival:
 
 ## Observability
 
-`[INSERT GRAFANA DASHBOARD SCREENSHOT HERE]`
+<img width="1442" height="896" alt="nexus-grafana" src="https://github.com/user-attachments/assets/6ab08187-068c-4664-b211-ed0bdbf0a6c5" />
 
 ### Metrics Collected
 
@@ -253,7 +276,8 @@ A rising `queue_depth` means "spin up more workers." A `notifications_failed_tot
 
 ## Database Schema
 
-`[INSERT PRISMA STUDIO SCREENSHOT HERE]`
+<img width="973" height="812" alt="db schmea" src="https://github.com/user-attachments/assets/97feb41a-b6fe-40ee-9924-4b72b3eb167a" />
+
 
 ```prisma
 model Tenant {
@@ -320,7 +344,8 @@ model DeliveryAttempt {
 
 ## Performance
 
-`[INSERT k6 LOAD TEST RESULTS HERE   screenshot or output of running k6/load-test.js against a deployed instance]`
+<img width="704" height="824" alt="nexus-k6" src="https://github.com/user-attachments/assets/3dcb3273-2932-41cd-9c9a-19a9fbed91dd" />
+
 
 The load test (`k6/load-test.js`) ramps from 0 to 200 concurrent virtual users over two minutes and holds there, posting notifications against the live `/api/v1/notification` endpoint with a unique idempotency key per request, against thresholds of **p95 latency under 3s** and **error rate under 1%**. Run it yourself:
 
