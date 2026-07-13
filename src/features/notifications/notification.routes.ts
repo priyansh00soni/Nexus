@@ -115,53 +115,6 @@ const router = Router()
  *       404:
  *         description: Notification history item not found.
  *
- * components:
- *   schemas:
- *     RawNotificationPayload:
- *       type: object
- *       required:
- *         - message
- *         - channel
- *         - recipient
- *       properties:
- *         message:
- *           type: string
- *         channel:
- *           type: string
- *           enum: [EMAIL, INAPP, WEBHOOK]
- *         recipient:
- *           type: string
- *         variables:
- *           type: object
- *           additionalProperties: true
- *         subject:
- *           type: string
- *         scheduledFor:
- *           type: string
- *           format: date-time
- *
- *     TemplateNotificationPayload:
- *       type: object
- *       required:
- *         - template_id
- *         - channel
- *         - recipient
- *       properties:
- *         template_id:
- *           type: string
- *         channel:
- *           type: string
- *           enum: [EMAIL, INAPP, WEBHOOK]
- *         recipient:
- *           type: string
- *         variables:
- *           type: object
- *           additionalProperties: true
- *         subject:
- *           type: string
- *         scheduledFor:
- *           type: string
- *           format: date-time
  */
 
 

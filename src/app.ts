@@ -31,23 +31,73 @@ app.use(cookieParser())
 
 const options = {
   definition: {
-   openapi: '3.0.0',
+    openapi: '3.0.0',
     info: {
       title: 'Nexus',
       version: '1.0.0',
     },
     components: {
-        securitySchemes: {
-            ApiKeyAuth: {
-            type: 'apiKey',
-            in: 'header',
-            name: 'x-api-key'
-            }
+      securitySchemes: {
+        ApiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'x-api-key'
         }
+      },
+      schemas: {
+        RawNotificationPayload: {
+          type: 'object',
+          required: ['message', 'channel', 'recipient'],
+          properties: {
+            message: { type: 'string' },
+            channel: { 
+              type: 'string', 
+              enum: ['EMAIL', 'INAPP', 'WEBHOOK'] 
+            },
+            recipient: { type: 'string' },
+            variables: {
+              type: 'object',
+              additionalProperties: true
+            },
+            subject: { type: 'string' },
+            scheduledFor: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        },
+        TemplateNotificationPayload: {
+          type: 'object',
+          required: ['template_id', 'channel', 'recipient'],
+          properties: {
+            template_id: { type: 'string' },
+            channel: { 
+              type: 'string', 
+              enum: ['EMAIL', 'INAPP', 'WEBHOOK'] 
+            },
+            recipient: { type: 'string' },
+            variables: {
+              type: 'object',
+              additionalProperties: true
+            },
+            subject: { type: 'string' },
+            scheduledFor: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        }
+      }
     }
   },
-  apis: ['src/features/notifications/notification.routes.ts','src/features/templates/template.routes.ts','src/features/tenants/tenant.routes.ts','src/monitoring/monitoring.routes.ts'],
+  apis: [
+    'src/features/notifications/notification.routes.ts',
+    'src/features/templates/template.routes.ts',
+    'src/features/tenants/tenant.routes.ts',
+    'src/monitoring/monitoring.routes.ts'
+  ],
 };
+
 
 const swaggerSpecification = swaggerJsdoc(options);
 
