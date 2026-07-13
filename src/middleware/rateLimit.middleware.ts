@@ -16,7 +16,7 @@ const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)
 
     if(leftEntriesCount>=100000) throw new ApiError(429,"Too many requests")
     
-    redis.zadd(key,now,`${now}-${Math.random()}`)
+    await redis.zadd(key,now,`${now}-${Math.random()}`)
 
     await redis.expire(key, 60)//This sets the sorted set itself to automatically delete after 60 seconds of no activity, just as a safety cleanup so Redis doesn't keep empty or abandoned keys forever for tenants who stop sending requests.
     next()
