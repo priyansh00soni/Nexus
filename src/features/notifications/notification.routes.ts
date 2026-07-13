@@ -10,18 +10,19 @@ const router = Router()
 
 /**
  * @openapi
- * /api/v1/notification:
+ * /api/v1/notifications:
  *   post:
  *     summary: Create or schedule a notification
  *     description: Send a notification using a template ID or a raw message layout.
  *     security:
  *       - ApiKeyAuth: []
- *     headers:
- *       Idempotency-Key:
+ *     parameters:
+ *       - in: header
+ *         name: Idempotency-Key
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description:  unique key to prevent duplicate processing.
+ *         description: unique key to prevent duplicate processing.
  *     requestBody:
  *       required: true
  *       content:
