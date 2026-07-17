@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ NEXUS
+# ⚡ NEXUS 
 
 ### Multi-Tenant, Multi-Channel Notification Delivery Infrastructure
 
