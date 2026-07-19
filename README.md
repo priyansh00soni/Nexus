@@ -425,7 +425,7 @@ curl -X POST https://nexus-api-ci20.onrender.com/api/v1/notification \
   "data": { "notification_id": "uuid", "status": "PROCESSING" }
 }
 ```
-
+ 
 
 ## Author
 
