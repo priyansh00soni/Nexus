@@ -19,7 +19,7 @@
 [![OpenAPI](https://img.shields.io/badge/API%20Docs-Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)](https://nexus-api-ci20.onrender.com/api/v1/api-docs)
 [![Live on Render](https://img.shields.io/badge/Live-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://nexus-api-ci20.onrender.com/api/v1/monitoring/health)
 
-**[🚀 Live API](https://nexus-api-ci20.onrender.com) · [📊 Health Check](https://nexus-api-ci20.onrender.com/api/v1/monitoring/) · [📘 Swagger Docs](https://nexus-api-ci20.onrender.com/api/v1/api-docs)**
+**[🚀 Live API](https://nexus-w21t.onrender.com/) · [📊 Health Check](https://nexus-w21t.onrender.com/api/v1/monitoring/) · [📘 Swagger Docs](https://nexus-w21t.onrender.com/api/v1/api-docs/)**
 
 </div>
 
