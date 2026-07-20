@@ -16,8 +16,8 @@
 [![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-E6522C?style=flat-square&logo=prometheus&logoColor=white)](https://prometheus.io/)
 [![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?style=flat-square&logo=grafana&logoColor=white)](https://grafana.com/)
 [![CI](https://img.shields.io/github/actions/workflow/status/priyansh00soni/Nexus/ci.yml?branch=main&style=flat-square&label=CI&logo=github)](https://github.com/priyansh00soni/Nexus/actions)
-[![OpenAPI](https://img.shields.io/badge/API%20Docs-Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)](https://nexus-api-ci20.onrender.com/api/v1/api-docs)
-[![Live on Render](https://img.shields.io/badge/Live-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://nexus-api-ci20.onrender.com/api/v1/monitoring/health)
+[![OpenAPI](https://img.shields.io/badge/API%20Docs-Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black)](https://nexus-w21t.onrender.com/api/v1/api-docs/)
+[![Live on Render](https://img.shields.io/badge/Live-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://nexus-w21t.onrender.com/api/v1/monitoring)
 
 **[🚀 Live API](https://nexus-w21t.onrender.com/) · [📊 Health Check](https://nexus-w21t.onrender.com/api/v1/monitoring/) · [📘 Swagger Docs](https://nexus-w21t.onrender.com/api/v1/api-docs/)**
 
@@ -385,7 +385,7 @@ npm run test
 
 ## API Reference
 
-Full request/response schemas are live at SwaggerUi : [`/api/v1/api-docs`](https://nexus-api-ci20.onrender.com/api/v1/api-docs). Summary:
+Full request/response schemas are live at SwaggerUi : [`/api/v1/api-docs`](https://nexus-w21t.onrender.com/api/v1/api-docs/). Summary:
 
 <img width="1476" height="953" alt="swagger" src="https://github.com/user-attachments/assets/ea1af66a-55ec-4c93-82d3-bcd0f6f49239" />
 
@@ -405,7 +405,7 @@ Full request/response schemas are live at SwaggerUi : [`/api/v1/api-docs`](https
 ### Example: Send a Notification
 
 ```bash
-curl -X POST https://nexus-api-ci20.onrender.com/api/v1/notification \
+curl -X POST https://nexus-w21t.onrender.com/api/v1/notification \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Idempotency-Key: order-confirmed-user-123" \
   -H "Content-Type: application/json" \
