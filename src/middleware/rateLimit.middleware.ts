@@ -10,15 +10,18 @@ const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)
     const now =Date.now()
     const windowStart = now - 60000
 
-    await redis.zremrangebyscore(key, 0, windowStart) // This deletes every entry in the sorted set whose score, which is the timestamp, is between 0 and windowStart. In simple words, delete everything older than 60 seconds ago. This keeps the sorted set clean and only containing recent requests.
+    //pipeline sends all 4 commands in one round trip instead of 4 sequential ones.
+    const results = await redis.pipeline()
+        .zremrangebyscore(key, 0, windowStart) // delete everything older than 60 seconds ago, keeps the sorted set clean and only containing recent requests.
+        .zcard(key) //zcard simply counts how many items currently exist in the sorted set
+        .zadd(key,now,`${now}-${Math.random()}`)
+        .expire(key, 60)//auto delete the sorted set after 60 seconds of no activity, safety cleanup so Redis doesn't keep abandoned keys forever.
+        .exec()
 
-    const leftEntriesCount = await redis.zcard(key) //zcard simply counts how many items currently exist in the sorted set
+    const leftEntriesCount = Number(results?.[1]?.[1] ?? 0)
 
     if(leftEntriesCount>=6000) throw new ApiError(429,"Too many requests")
-    
-    await redis.zadd(key,now,`${now}-${Math.random()}`)
 
-    await redis.expire(key, 60)//This sets the sorted set itself to automatically delete after 60 seconds of no activity, just as a safety cleanup so Redis doesn't keep empty or abandoned keys forever for tenants who stop sending requests.
     next()
 })
 
