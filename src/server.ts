@@ -6,6 +6,10 @@ import logger from "./utils/logger.js";
 await connectDB()
 await connectRedis()
 
+await import('./workers/email.worker.js');
+await import('./workers/inapp.worker.js');
+await import('./workers/webhook.worker.js');
+
 const server = app.listen(process.env.APP_PORT || 8000 , ()=>{
     logger.info(`App listens at port: ${process.env.APP_PORT}`);
 })
