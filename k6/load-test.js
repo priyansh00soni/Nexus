@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-
+//local build - docker compose -f docker-compose.local.yml up -d --build
+//k6 run k6/load-test.js
 export const options = {
   stages: [
     { duration: '30s', target: 50 },   // ramp up to 50 users

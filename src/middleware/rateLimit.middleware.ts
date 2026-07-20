@@ -14,7 +14,7 @@ const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)
 
     const leftEntriesCount = await redis.zcard(key) //zcard simply counts how many items currently exist in the sorted set
 
-    if(leftEntriesCount>=100000) throw new ApiError(429,"Too many requests")
+    if(leftEntriesCount>=6000) throw new ApiError(429,"Too many requests")
     
     await redis.zadd(key,now,`${now}-${Math.random()}`)
 
