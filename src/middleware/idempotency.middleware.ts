@@ -11,45 +11,42 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
     const idempotencyKey = req.headers['idempotency-key'] as string
     if(!idempotencyKey) throw new ApiError(400,"Idempotency Key Required.")
 
-    const incomingReqHash = crypto.createHash('sha256').update(JSON.stringify(req.body)).digest('hex')    
+    const incomingReqHash = crypto.createHash('sha256').update(JSON.stringify(req.body)).digest('hex')
 
-    const redisCache = await redis.get(`idempotency:${req.tenant.id}:${idempotencyKey}`)
+    const redisKey = `idempotency:${req.tenant.id}:${idempotencyKey}`
 
-    if(redisCache){
-        const { requestHash, responseBody } = JSON.parse(redisCache)
+    //save in redis only if its the first request => NX helps us do that
+    const isFirstRequest = await redis.set(redisKey, JSON.stringify({requestHash:incomingReqHash, status:"PROCESSING"}), 'EX', 86400, 'NX')
 
-    if(requestHash!== incomingReqHash) throw new ApiError(409,"Please use different idempotency key.")
-    
-    if(responseBody) return res.status(200).json(responseBody)
-    }
-        
-    const idempotencyRecord =await prisma.idempotencyRecord.findUnique({
-        where:{idempotency_key_tenant_id:{idempotency_key:idempotencyKey, tenant_id:req.tenant.id}},
-    })
+    if(!isFirstRequest){
+        const existingRequest = await redis.get(redisKey)
+        if(existingRequest){
+            const { requestHash, status, responseBody } = JSON.parse(existingRequest)
 
-    if(idempotencyRecord){
-        if(incomingReqHash!==idempotencyRecord.request_hash) throw new ApiError(409,"Please use different idempotency key.")
+            if(requestHash!== incomingReqHash) throw new ApiError(409,"Please use different idempotency key.")
 
-        if(idempotencyRecord.status=="PROCESSING") return res.status(409).json(new ApiResponse(409,"Request is already being processed"))
-        
-        if(idempotencyRecord.response_body) return res.status(200).json(idempotencyRecord.response_body)
+            if(responseBody) return res.status(200).json(responseBody)
+
+            if(status==="PROCESSING") return res.status(409).json(new ApiResponse(409,"Request is already being processed"))
+        }
     }
 
-    await prisma.idempotencyRecord.create({
+    //Add to DB. no await used in order to reduce req latency.
+    prisma.idempotencyRecord.create({
         data:{
             request_hash:incomingReqHash,
             status:"PROCESSING",
             tenant_id:req.tenant.id,
             idempotency_key:idempotencyKey
         }
-    })
+    }).catch(err => logger.error("Idempotency DB insert failed", {error:err.message, correlationId: req.correlationId }))
 
     const originalJson = res.json.bind(res)
 
     res.json = (data:any) =>{
         redis.set(
-            `idempotency:${req.tenant.id}:${idempotencyKey}`,
-            JSON.stringify({requestHash:incomingReqHash, responseBody:data}),
+            redisKey,
+            JSON.stringify({requestHash:incomingReqHash, status:"COMPLETED", responseBody:data}),
             'EX',86400
         ).catch(err => logger.error("Redis cache failed", {error:err.message, correlationId: req.correlationId }))
 
@@ -60,7 +57,7 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
 
         return originalJson(data)
     }
-    
+
     next()
 })
 
