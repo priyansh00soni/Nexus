@@ -337,7 +337,7 @@ k6 run k6/load-test.js
 At a sustained load of 100 requests per second (3,000 requests over 30s), Nexus achieves:
 - **Median Latency:** ~35ms
 - **p95 Latency:** ~957ms
-- **Error Rate:** 0.00%
+- **Error Rate:** 0.01%
 - **Throughput:** 100% success rate with zero dropped requests.
 
 ---
