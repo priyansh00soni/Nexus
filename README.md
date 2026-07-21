@@ -266,7 +266,8 @@ A rising `queue_depth` means "spin up more workers." A `notifications_failed_tot
 
 ## Database Schema
 
-<img width="973" height="812" alt="db schmea" src="https://github.com/user-attachments/assets/97feb41a-b6fe-40ee-9924-4b72b3eb167a" />
+<img width="1376" height="1143" alt="ChatGPT Image Jul 21, 2026, 08_10_30 PM" src="https://github.com/user-attachments/assets/844febe5-fb95-4d73-b7d5-8d6dd0e09c0a" />
+
 
 
 ```prisma
@@ -325,7 +326,8 @@ model DeliveryAttempt {
 
 ## Performance
 
-<img width="704" height="824" alt="nexus-k6" src="https://github.com/user-attachments/assets/3dcb3273-2932-41cd-9c9a-19a9fbed91dd" />
+<img width="699" height="906" alt="image" src="https://github.com/user-attachments/assets/17f7b5bd-74f3-413f-8357-9f04c2aa63be" />
+
 
 
 The load test (`k6/load-test.js`) ramps from 0 to 200 concurrent virtual users over two minutes and holds there, posting notifications against the live `/api/v1/notification` endpoint with a unique idempotency key per request, against thresholds of **p95 latency under 1s** and **error rate under 1%**. Run it yourself:
