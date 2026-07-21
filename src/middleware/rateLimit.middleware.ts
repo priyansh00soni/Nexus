@@ -19,7 +19,7 @@ const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)
 
     const leftEntriesCount = Number(results?.[1]?.[1] ?? 0)
 
-    if(leftEntriesCount>=20000) throw new ApiError(429,"Too many requests")
+    if(leftEntriesCount>=100) throw new ApiError(429,"Too many requests")
 
     //only count allowed requests toward the window, rejected ones shouldn't extend the block.
     await redis.pipeline()
