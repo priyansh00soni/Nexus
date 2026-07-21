@@ -4,8 +4,13 @@ import { inappQueue } from "../../queues/inapp.queue.js"
 import { webhookQueue } from "../../queues/webhook.queue.js"
 import ApiError from "../../utils/ApiError.js"
 
-const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:Date,correlationId?:string)=>{
+const queueMap = {
+    EMAIL: emailQueue,
+    INAPP: inappQueue,
+    WEBHOOK: webhookQueue
+} as const
 
+const createNotification = async(tenant_id:string, recipient:string,channel: ("WEBHOOK" | "INAPP" | "EMAIL"), template_id?:string,message?:string, variables?: Record<string, unknown>, subject? : string ,scheduledFor?:Date,correlationId?:string)=>{
 
     const notification = await prisma.notification.create({
         data:{
@@ -24,19 +29,13 @@ const createNotification = async(tenant_id:string, recipient:string,channel: ("W
 
     const delay = scheduledFor ? Math.max(0, scheduledFor.getTime() - Date.now()) : 0
 
-    const queueMap = {
-        EMAIL: emailQueue,
-        INAPP: inappQueue,
-        WEBHOOK: webhookQueue
-    }
-
     await queueMap[channel].add(`send-${channel.toLowerCase()}` ,{ notification_id: notification.id, tenant_id,correlationId },{
-    delay,
-    attempts: 3,
-    backoff: {
-        type: 'custom',
-    }
-})
+        delay,
+        attempts: 3,
+        backoff: {
+            type: 'custom',
+        }
+    })
 
     return notification
 }

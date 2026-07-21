@@ -31,15 +31,15 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
         }
     }
 
-    //Add to DB. no await used in order to reduce req latency.
-    prisma.idempotencyRecord.create({
-        data:{
-            request_hash:incomingReqHash,
-            status:"PROCESSING",
-            tenant_id:req.tenant.id,
-            idempotency_key:idempotencyKey
-        }
-    }).catch(err => logger.error("Idempotency DB insert failed", {error:err.message, correlationId: req.correlationId }))
+    // //Add to DB. no await used in order to reduce req latency.
+    // prisma.idempotencyRecord.create({
+    //     data:{
+    //         request_hash:incomingReqHash,
+    //         status:"PROCESSING",
+    //         tenant_id:req.tenant.id,
+    //         idempotency_key:idempotencyKey
+    //     }
+    // }).catch(err => logger.error("Idempotency DB insert failed", {error:err.message, correlationId: req.correlationId }))
 
     const originalJson = res.json.bind(res)
 
@@ -50,10 +50,10 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
             'EX',86400
         ).catch(err => logger.error("Redis cache failed", {error:err.message, correlationId: req.correlationId }))
 
-        prisma.idempotencyRecord.update({
-            where:{idempotency_key_tenant_id:{idempotency_key:idempotencyKey, tenant_id:req.tenant.id}},
-            data:{status:"COMPLETED", response_body:data}
-        }).catch(err => logger.error("DB update failed", { error: err.message, correlationId: req.correlationId  }))
+        // prisma.idempotencyRecord.update({
+        //     where:{idempotency_key_tenant_id:{idempotency_key:idempotencyKey, tenant_id:req.tenant.id}},
+        //     data:{status:"COMPLETED", response_body:data}
+        // }).catch(err => logger.error("DB update failed", { error: err.message, correlationId: req.correlationId  }))
 
         return originalJson(data)
     }
