@@ -15,7 +15,7 @@ const idempotencyMid = asyncHandler(async(req:Request,res:Response,next:NextFunc
 
     const redisKey = `idempotency:${req.tenant.id}:${idempotencyKey}`
 
-    //save in redis only if its the first request => NX helps us do that
+    //save in redis only if its the first request => NX helps us do that. else Redis returns null and we treat it as a duplicate.
     const isFirstRequest = await redis.set(redisKey, JSON.stringify({requestHash:incomingReqHash, status:"PROCESSING"}), 'EX', 86400, 'NX')
 
     if(!isFirstRequest){
