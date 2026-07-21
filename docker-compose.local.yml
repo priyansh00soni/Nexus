@@ -24,6 +24,8 @@ services:
     build: .
     env_file:
       - .env
+    environment:
+      START_WORKERS_IN_API: "false" # worker-1/worker-2 containers handle jobs here
     ports:
       - "8000:8000"
     restart: always

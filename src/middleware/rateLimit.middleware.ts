@@ -3,6 +3,7 @@ import { redis } from "../config/redis.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 
+
 const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)=>{
     
     //works for per tenant, uses sorted set. - sliding window rate limiting.
@@ -18,7 +19,7 @@ const rateLimit = asyncHandler(async(req:Request,res:Response,next:NextFunction)
 
     const leftEntriesCount = Number(results?.[1]?.[1] ?? 0)
 
-    if(leftEntriesCount>=6000) throw new ApiError(429,"Too many requests")
+    if(leftEntriesCount>=20000) throw new ApiError(429,"Too many requests")
 
     //only count allowed requests toward the window, rejected ones shouldn't extend the block.
     await redis.pipeline()

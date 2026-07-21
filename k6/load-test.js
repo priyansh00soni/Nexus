@@ -4,16 +4,24 @@ import { check } from 'k6';
 // local build - docker compose -f docker-compose.local.yml up -d --build
 // k6 run k6/load-test.js
 
+// 429 = rate limiter doing its job, don't count it as a failure in http_req_failed
+http.setResponseCallback(http.expectedStatuses(201, 429));
+
 export const options = {
-  stages: [
-    { duration: '30s', target: 50 },   
-    { duration: '1m', target: 200 }, 
-    { duration: '1m', target: 200 },   
-    { duration: '30s', target: 0 },   
-  ],
+  scenarios: {
+    sustained_load: {
+      executor: 'constant-arrival-rate',
+      rate: 200,              // 200 requests per second
+      timeUnit: '1s',
+      duration: '2m',
+      preAllocatedVUs: 100,
+      maxVUs: 300,
+    },
+  },
   thresholds: {
-    http_req_duration: ['p(95)<3000'],
-    http_req_failed: ['rate<0.01'],
+    http_req_duration: ['p(95)<800', 'p(99)<1500'],
+    http_req_failed: ['rate<0.01'], 
+    checks: ['rate>0.99'],
   },
 };
 
@@ -37,6 +45,6 @@ export default function () {
   );
 
   check(res, {
-    'status is 201 or 429': (r) => r.status === 201 || r.status === 429,
+    'status is 201': (r) => r.status === 201,
   });
 }
