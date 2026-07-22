@@ -31,8 +31,9 @@ Nexus is a standalone notification service that businesses call over an API to d
 
 <div align="center">
 
-https://github.com/user-attachments/assets/ffc2f3a7-e4a8-4e22-b034-19e223e27a37
+[<img width="1774" height="887" alt="image" src="https://github.com/user-attachments/assets/e79232c3-b94e-4444-a5e0-8e0222d897f0" />](https://res.cloudinary.com/dospcif0y/video/upload/v1784661275/Nexus-demo-720p_ogjwql.mp4)
 
+[Watch Demo!!!](https://res.cloudinary.com/dospcif0y/video/upload/v1784661275/Nexus-demo-720p_ogjwql.mp4)
 </div>
 
 ---
