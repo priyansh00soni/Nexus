@@ -71,7 +71,7 @@ const worker = new Worker('email-queue',async job => {
             }
         })
         logger.info("Notification sent for email job.", {
-          correlationId: job.data.correlationId,messageString
+          correlationId: job.data.correlationId,messageString, recipient:notification.recipient
         });
     } catch (error) {
         logger.error("DB update Failed in email job.", {
